@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>穀與匠心：義大利麵的視覺巡禮</title>
+    <style>
+        /* --- 莫蘭迪大地色系與字體設定 --- */
+        :root {
+            --bg-base: #F2EFE9;       /* 溫潤紙張底色 */
+            --text-dark: #3A3530;     /* 深墨灰 */
+            --text-light: #7A7267;    /* 淺灰棕 */
+            --accent-terra: #B25D4A;  /* 陶土紅 */
+            --accent-wheat: #D4B886;  /* 麥穗黃 */
+            --accent-sage: #899C8E;   /* 鼠尾草綠 */
+            --border-color: #D8D1C7;
+        }
+
+        body {
+            margin: 0;
+            font-family: 'Noto Serif TC', 'Georgia', serif; /* 使用襯線字體增添人文底蘊 */
+            background-color: var(--bg-base);
+            color: var(--text-dark);
+            overflow-x: hidden;
+            line-height: 1.8;
+        }
+
+        h1, h2, h3 {
+            font-weight: normal;
+            letter-spacing: 2px;
+            margin: 0;
+        }
+
+        /* --- Intro: 喚醒 --- */
+        .hero {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            background: linear-gradient(rgba(242, 239, 233, 0.75), rgba(242, 239, 233, 0.95)), url('https://images.unsplash.com/photo-1473093295043-cdd812d0e601?auto=format&fit=crop&w=1600&q=80') center/cover;
+            padding: 20px;
+            position: relative;
+        }
+
+        .hero h1 {
+            font-size: 3.5rem;
+            letter-spacing: 6px;
+            margin-bottom: 20px;
+            color: var(--text-dark);
+            border-bottom: 1px solid var(--text-dark);
+            padding-bottom: 20px;
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            letter-spacing: 3px;
+            color: var(--text-light);
+            max-width: 600px;
+            font-family: 'Helvetica Neue', sans-serif;
+        }
+
+        .scroll-indicator {
+            position: absolute;
+            bottom: 50px;
+            font-size: 1.2rem;
+            letter-spacing: 2px;
+            color: var(--text-light);
+            animation: fadeBounce 2s infinite;
+            font-family: 'Helvetica Neue', sans-serif;
+        }
+
+        @keyframes fadeBounce {
+            0%, 100% { transform: translateY(0); opacity: 0.5; }
+            50% { transform: translateY(10px); opacity: 1; }
+        }
+
+        /* --- 滾動敘事區塊 (Scrollytelling) --- */
+        .story-section {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 80px 20px;
+        }
+
+        .content-card {
+            display: flex;
+            max-width: 1100px;
+            width: 100%;
+            align-items: center;
+            gap: 60px;
+            /* 動畫初始狀態：隱藏且偏移 */
+            opacity: 0;
+            transform: translateY(60px);
+            transition: all 1.2s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+
+        .content-card.in-view {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* 左右交替排版 */
+        .story-section:nth-child(odd) .content-card {
+            flex-direction: row-reverse;
+        }
+
+        .image-box {
+            flex: 1.2;
+            height: 600px;
+            border-radius: 4px;
+            overflow: hidden;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.08);
+            position: relative;
+        }
+
+        /* 圖片懸停的微互動：緩慢放大 */
+        .image-box img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 6s ease;
+        }
+        
+        .image-box:hover img {
+            transform: scale(1.05);
+        }
+
+        /* 為圖片加上莫蘭迪色調的微遮罩 */
+        .image-overlay {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none;
+        }
+        #stage-1 .image-overlay { background: rgba(212, 184, 134, 0.15); } /* 麥田黃 */
+        #stage-2 .image-overlay { background: rgba(184, 168, 152, 0.15); } /* 石磨灰 */
+        #stage-3 .image-overlay { background: rgba(192, 138, 128, 0.15); } /* 陶土紅 */
+        #stage-4 .image-overlay { background: rgba(137, 156, 142, 0.15); } /* 鼠尾草綠 */
+
+        .text-box {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .step-label {
+            font-family: 'Helvetica Neue', sans-serif;
+            font-size: 0.9rem;
+            font-weight: bold;
+            color: var(--accent-terra);
+            letter-spacing: 4px;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+        }
+
+        .text-box h2 {
+            font-size: 2.5rem;
+            margin-bottom: 30px;
+            color: var(--text-dark);
+            line-height: 1.3;
+        }
+
+        .text-box p {
+            font-size: 1.1rem;
+            color: var(--text-light);
+            text-align: justify;
+            margin-bottom: 20px;
+            font-family: 'Helvetica Neue', '微軟正黑體', sans-serif;
+        }
+
+        /* --- Epilogue: 結論 --- */
+        .epilogue {
+            min-height: 70vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            background-color: #E8E4DC;
+            padding: 60px 20px;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .epilogue-content {
+            max-width: 700px;
+            opacity: 0;
+            transform: translateY(40px);
+            transition: all 1.2s ease;
+        }
+
+        .epilogue-content.in-view {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .epilogue h2 {
+            font-size: 2.2rem;
+            margin-bottom: 30px;
+            color: var(--text-dark);
+        }
+
+        .badge-btn {
+            margin-top: 40px;
+            background: transparent;
+            border: 1px solid var(--text-dark);
+            color: var(--text-dark);
+            padding: 15px 40px;
+            font-size: 1rem;
+            letter-spacing: 3px;
+            cursor: pointer;
+            font-family: 'Helvetica Neue', sans-serif;
+            transition: all 0.4s ease;
+            text-transform: uppercase;
+        }
+
+        .badge-btn:hover {
+            background: var(--text-dark);
+            color: var(--bg-base);
+        }
+
+        /* --- RWD: 手機版適應 --- */
+        @media (max-width: 900px) {
+            .hero h1 { font-size: 2.5rem; letter-spacing: 4px; }
+            .content-card, .story-section:nth-child(odd) .content-card {
+                flex-direction: column;
+                gap: 40px;
+            }
+            .image-box { height: 400px; width: 100%; }
+            .text-box { text-align: center; }
+            .text-box p { text-align: left; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 喚醒區塊 -->
+    <header class="hero">
+        <h1>穀與匠心</h1>
+        <p>喧囂的城市裡，食物只是為了填飽肚子？<br>重新認識日常餐桌上的歐洲飲食文化與工藝美學。</p>
+        <div class="scroll-indicator">往下探索 旅程起點</div>
+    </header>
+
+    <!-- STAGE 01: 產地麥田 -->
+    <section class="story-section" id="stage-1">
+        <div class="content-card">
+            <div class="image-box">
+                <div class="image-overlay"></div>
+                <img src="https://images.unsplash.com/photo-1501430654243-c934cec2e1c0?auto=format&fit=crop&w=1000&q=80" alt="廣闊的金黃色杜蘭小麥田">
+            </div>
+            <div class="text-box">
+                <div class="step-label">Terra / 風土</div>
+                <h2>來自土地的餽贈</h2>
+                <p>故事始於地中海溫暖的陽光。深入探討義大利不同地域的風土與氣候，南義炎熱乾燥的氣候孕育出高蛋白質、適合乾燥保存的硬質「杜蘭小麥 (Durum Wheat)」。</p>
+                <p>而北義受阿爾卑斯山脈影響，氣候濕潤，因而發展出加入雞蛋揉製的新鮮麵團。每一粒麥子，都紀錄著當地風土的獨特指紋。</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- STAGE 02: 麵團揉製 -->
+    <section class="story-section" id="stage-2">
+        <div class="content-card">
+            <div class="image-box">
+                <div class="image-overlay"></div>
+                <img src="https://images.unsplash.com/photo-1586201375761-83865001e31c?auto=format&fit=crop&w=1000&q=80" alt="工匠手揉新鮮杜蘭小麥麵糰">
+            </div>
+            <div class="text-box">
+                <div class="step-label">Craftsmanship / 匠心</div>
+                <h2>指尖上的歷史底蘊</h2>
+                <p>經過傳統石磨細細碾磨的粗粒小麥粉 (Semolina)，在工匠粗糙而充滿力量的手中甦醒。製麵不僅是一項技術，更是一種直覺。</p>
+                <p>職人們透過手感敏銳地判斷麵糰的濕度、溫度與彈性。在這揉壓與靜置的呼吸之間，包覆著對食材的至高尊重與數百年傳承的歷史記憶。</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- STAGE 03: 多樣麵體成型 -->
+    <section class="story-section" id="stage-3">
+        <div class="content-card">
+            <div class="image-box">
+                <div class="image-overlay"></div>
+                <img src="https://images.unsplash.com/photo-1608897013039-887f21d8c804?auto=format&fit=crop&w=1000&q=80" alt="傳統黃銅模具擠壓製麵">
+            </div>
+            <div class="text-box">
+                <div class="step-label">Aesthetics / 形塑</div>
+                <h2>因應風土的工藝美學</h2>
+                <p>超過三百種的義大利麵形狀，絕非偶然，而是歐洲飲食文化中極致的「工藝設計」。傳統工廠使用黃銅模具 (Bronze Die) 擠壓麵條，賦予其表面微小而關鍵的粗糙孔隙。</p>
+                <p>從宛如貝殼的 Conchiglie 到細長的 Spaghetti，每一種形狀的誕生，都是為了解決「如何完美承載當地特色醬汁」這道千古難題。</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- STAGE 04: 醬汁融合 -->
+    <section class="story-section" id="stage-4">
+        <div class="content-card">
+            <div class="image-box">
+                <div class="image-overlay"></div>
+                <img src="https://images.unsplash.com/photo-1473093295043-cdd812d0e601?auto=format&fit=crop&w=1000&q=80" alt="義大利鄉村木桌上的精緻義大利麵">
+            </div>
+            <div class="text-box">
+                <div class="step-label">Fusion / 融合</div>
+                <h2>麵體與醬汁的完美婚姻</h2>
+                <p>當粗糙表面的寬扁麵遇上波隆那濃郁的肉醬，當細長直麵裹上那不勒斯清澈的蒜香橄欖油——這是食材間最神聖的融合。</p>
+                <p>跳脫純粹追求美味的表層，我們看見的是自然風土的餽贈與人類智慧的結晶，在餐桌上達成了令人屏息的和諧。</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- 結論與推廣 -->
+    <footer class="epilogue">
+        <div class="epilogue-content">
+            <h2>細品日常中的歷史匠心</h2>
+            <p style="color: var(--text-light); font-size: 1.1rem; max-width: 500px; margin: 0 auto; font-family: 'Helvetica Neue', sans-serif;">
+                下一次品嚐時，願你能帶著全新的文化視角。<br>
+                細細咀嚼每一口蘊藏的歐洲麵食視覺巡禮。
+            </p>
+            <button class="badge-btn" onclick="window.location.href='pasta.html'">進入義大利麵小廚房</button>
+        </div>
+    </footer>
+
+    <script>
+        // Intersection Observer API：控制元素在滾動進入視窗時觸發浮現動畫
+        document.addEventListener("DOMContentLoaded", function() {
+            // 選取所有需要動畫的區塊
+            const animatedElements = document.querySelectorAll('.content-card, .epilogue-content');
+
+            const observerOptions = {
+                root: null,
+                rootMargin: '0px',
+                threshold: 0.2 // 當元素有 20% 進入畫面時觸發
+            };
+
+            const observer = new IntersectionObserver((entries, observer) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('in-view');
+                        // 觸發後解除觀察，讓元素保持顯示
+                        observer.unobserve(entry.target); 
+                    }
+                });
+            }, observerOptions);
+
+            animatedElements.forEach(el => {
+                observer.observe(el);
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>穀與匠心：義大利麵小廚房</title>
+    <style>
+        /* --- 承襲 index.html 的視覺規範 --- */
+        :root {
+            --bg-base: #F2EFE9;       /* 溫潤紙張底色 */
+            --panel-bg: #FFFFFF;
+            --text-dark: #3A3530;     /* 深墨灰 */
+            --text-light: #7A7267;    /* 淺灰棕 */
+            --accent-terra: #B25D4A;  /* 陶土紅 */
+            --accent-wheat: #D4B886;  /* 麥穗黃 */
+            --accent-sage: #899C8E;   /* 鼠尾草綠 */
+            --border-color: #D8D1C7;
+        }
+
+        body {
+            font-family: 'Noto Serif TC', 'Georgia', serif;
+            background-color: var(--bg-base);
+            color: var(--text-dark);
+            margin: 0;
+            padding: 40px 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+
+        h1 {
+            font-weight: normal;
+            letter-spacing: 4px;
+            margin-bottom: 10px;
+            color: var(--text-dark);
+            border-bottom: 1px solid var(--text-dark);
+            padding-bottom: 10px;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: var(--text-light);
+            margin-bottom: 40px;
+            letter-spacing: 1px;
+            font-family: 'Helvetica Neue', sans-serif;
+        }
+
+        .game-board {
+            display: flex;
+            justify-content: center;
+            align-items: stretch;
+            width: 100%;
+            max-width: 1200px;
+            gap: 30px;
+        }
+
+        .side-panel {
+            flex: 1;
+            background-color: var(--panel-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.03);
+            max-height: 75vh;
+            overflow-y: auto;
+        }
+
+        .side-panel h2 {
+            text-align: center;
+            font-size: 1.1rem;
+            font-weight: normal;
+            letter-spacing: 2px;
+            margin-top: 0;
+            padding-bottom: 15px;
+            color: var(--text-dark);
+            border-bottom: 1px solid var(--border-color);
+            position: sticky;
+            top: 0;
+            background: var(--panel-bg);
+            z-index: 10;
+        }
+
+        .grid-list {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .item-card {
+            border: 1px solid var(--border-color);
+            border-radius: 2px;
+            padding: 15px 5px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.4s ease;
+            background-color: #fcfcfc;
+        }
+
+        .item-card:hover {
+            border-color: var(--accent-wheat);
+            background-color: #fff;
+        }
+
+        .item-icon {
+            font-size: 2.2rem;
+            margin-bottom: 10px;
+            filter: grayscale(0.2);
+        }
+
+        .item-name {
+            font-size: 0.85rem;
+            letter-spacing: 1px;
+            color: var(--text-dark);
+        }
+
+        .item-card.selected {
+            background-color: var(--bg-base);
+            border-color: var(--accent-sage);
+            opacity: 0.7;
+        }
+
+        /* --- 中間烹飪區 --- */
+        .center-panel {
+            flex: 1.4;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background-color: #E8E4DC;
+            border-radius: 4px;
+            padding: 30px;
+            border: 1px solid var(--border-color);
+        }
+
+        .pot-slots {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+
+        .slot {
+            width: 100px;
+            height: 100px;
+            border: 1px dashed var(--text-light);
+            border-radius: 50%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background-color: rgba(255,255,255,0.5);
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .slot.filled {
+            border: 1px solid var(--accent-sage);
+            background-color: #fff;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        }
+
+        .slot-hint {
+            font-size: 0.7rem;
+            color: var(--text-light);
+            margin-top: 5px;
+            font-family: sans-serif;
+        }
+
+        .main-pot {
+            font-size: 7rem;
+            margin-bottom: 30px;
+            filter: sepia(0.2);
+        }
+
+        .cook-btn {
+            background-color: transparent;
+            border: 1px solid var(--text-dark);
+            color: var(--text-dark);
+            padding: 15px 50px;
+            font-size: 1rem;
+            letter-spacing: 4px;
+            cursor: pointer;
+            font-family: 'Noto Serif TC', serif;
+            transition: all 0.4s ease;
+            opacity: 0.3;
+            pointer-events: none;
+        }
+
+        .cook-btn.ready {
+            opacity: 1;
+            pointer-events: auto;
+            background-color: var(--text-dark);
+            color: var(--bg-base);
+        }
+
+        .cook-btn.ready:hover {
+            letter-spacing: 6px;
+        }
+
+        /* --- 結果視窗 --- */
+         /* 結果彈出視窗 (圖片背景樣式) */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.7);
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+            backdrop-filter: blur(8px);
+        }
+
+        .modal-content {
+            /* 這裡設定預設深色底，稍後透過 JS 覆蓋成圖片 */
+            background-color: #2a2a2a; 
+            padding: 50px 40px;
+            border-radius: 20px;
+            text-align: center;
+            max-width: 500px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+            animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            color: #ffffff; /* 文字改為白色以對比圖片 */
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+
+ @keyframes popIn {
+            0% { transform: scale(0.8); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+
+        .result-icon { 
+            font-size: 4rem; 
+            margin-bottom: 10px;
+            text-shadow: 0 4px 10px rgba(0,0,0,0.5);
+        }
+        
+        .result-title { 
+            color: #f9d877; /* 改為溫暖的鵝黃色搭配深色背景 */
+            font-size: 1.6rem; 
+            margin-bottom: 15px; 
+            text-shadow: 1px 1px 5px rgba(0,0,0,0.8);
+        }
+        
+        .result-desc { 
+            line-height: 1.6; 
+            color: #f0f0f0; 
+            margin-bottom: 30px; 
+            text-align: justify;
+            text-shadow: 1px 1px 4px rgba(0,0,0,0.8);
+            font-size: 1.05rem;
+        }
+
+        .close-btn {
+            background: var(--accent-green);
+            color: #fff;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 30px;
+            cursor: pointer;
+            font-size: 1.1rem;
+            font-weight: bold;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            transition: all 0.2s;
+        }
+
+        .close-btn:hover {
+            background: #768a7d;
+            transform: translateY(-2px);
+        }
+         
+        .badge-btn {
+            margin-top: 40px;
+            background: transparent;
+            border: 1px solid var(--text-dark);
+            color: var(--text-dark);
+            padding: 15px 40px;
+            font-size: 1rem;
+            letter-spacing: 3px;
+            cursor: pointer;
+            font-family: 'Helvetica Neue', sans-serif;
+            transition: all 0.4s ease;
+            text-transform: uppercase;
+        }
+
+        .badge-btn:hover {
+            background: var(--text-dark);
+            color: var(--bg-base);
+        }
+
+
+        /* 動畫 */
+        .is-cooking { animation: simmer 0.6s infinite alternate ease-in-out; }
+        @keyframes simmer {
+            from { transform: scale(1); }
+            to { transform: scale(1.05); }
+        }
+
+        @media (max-width: 900px) {
+            .game-board { flex-direction: column; }
+            .side-panel { max-height: none; }
+            .center-panel { order: -1; }
+        }
+    </style>
+</head>
+<body>
+    <h1>義大利麵小廚房</h1>
+    <div class="subtitle">將風土淬煉的麵體與經典醬汁融合，續寫日常餐桌的工藝篇章</div>
+
+    <div class="game-board">
+        <div class="side-panel">
+            <h2>🍝 選取麵體</h2>
+            <div class="grid-list" id="pasta-list"></div>
+        </div>
+
+        <div class="center-panel">
+            <div class="pot-slots">
+                <div class="slot" id="slot-pasta" onclick="removePasta()"><span class="slot-hint">期待揉製</span></div>
+                <div style="color: var(--text-light); font-size: 1.5rem;">+</div>
+                <div class="slot" id="slot-sauce" onclick="removeSauce()"><span class="slot-hint">待選醬汁</span></div>
+            </div>
+            <div class="main-pot" id="main-pot"><img src="img/Pasta.png" style="width: 120px; height: 120px; opacity: 0.8;" alt="鍋子"></div>
+            <button class="cook-btn" id="cook-btn" onclick="startCooking()">開始拌炒</button>
+            <div id="cooking-status" style="margin-top: 20px; font-size: 0.9rem; color: var(--accent-terra); height: 20px; letter-spacing: 2px;"></div>
+        </div>
+
+        <div class="side-panel">
+            <h2>🥫 慢熬醬料</h2>
+            <div class="grid-list" id="sauce-list"></div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="result-modal">
+        <div class="modal-content" id="result-modal-content">
+            <div class="result-icon">✦</div>
+            <h2 class="result-title" id="result-title">名稱</h2>
+            <div class="result-desc" id="result-desc">說明</div>
+            <button class="close-btn" onclick="closeModal()">再做一盤</button>
+        </div>
+    </div>
+ <div> 
+<button class="badge-btn" onclick="window.location.href='index.html'">重回旅程</button>
+ </div>
+    <script>
+        // 資料庫
+        const pastas = {
+            'spaghetti': { icon: '<img src="img/Spaghetti.png" style="width: 60px; height: 60px;">', zh: '細圓直麵' },
+            'penne': { icon: '<img src="img/Penne.png" style="width: 60px; height: 60px;">', zh: '筆管麵' },
+            'fusilli': { icon: '<img src="img/Fusilli.png" style="width: 60px; height: 60px;">', zh: '螺旋麵' },
+            'tagliatelle': { icon: '<img src="img/Tagliatelle.png" style="width: 60px; height: 60px;">', zh: '寬扁麵' },
+            'rigatoni': { icon: '<img src="img/Rigatoni.png" style="width: 60px; height: 60px;">', zh: '直管麵' },
+            'linguine': { icon: '<img src="img/Linguine.png" style="width: 60px; height: 60px;">', zh: '細扁麵' },
+            'ravioli': { icon: '<img src="img/Ravioli.png" style="width: 60px; height: 60px;">', zh: '方形餃' },
+            'pappardelle': { icon: '<img src="img/Pappardelle.png" style="width: 60px; height: 60px;">', zh: '寬帶麵' },
+            'fettuccine': { icon: '<img src="img/Fettuccine.png" style="width: 60px; height: 60px;">', zh: '緞帶麵' },
+            'conchiglie': { icon: '<img src="img/Conchiglie.png" style="width: 60px; height: 60px;">', zh: '貝殼麵' },
+            'lasagna': { icon: '<img src="img/Lasagna.png" style="width: 60px; height: 60px;">', zh: '千層麵' }
+        };
+
+        const sauces = {
+            'marinara': { icon: '🍅', zh: '經典紅醬' },
+            'carbonara': { icon: '🥓', zh: '卡邦尼醬' },
+            'pesto': { icon: '🌿', zh: '青醬' },
+            'bolognese': { icon: '🥩', zh: '波隆那肉醬' },
+            'aglio_e_olio': { icon: '🧄', zh: '蒜油醬' },
+            'alfredo': { icon: '🧀', zh: '奶油起司醬' },
+            'puttanesca': { icon: '🐟', zh: '煙花女醬' },
+            'vongole': { icon: '🦪', zh: '蛤蜊醬' },
+            'vodka': { icon: '🍸', zh: '伏特加番茄醬' },
+            'cacio_e_pepe': { icon: '🧂', zh: '起司黑胡椒醬' },
+            'nero': { icon: '🦑', zh: '墨魚醬' }
+        };
+
+        // 加上了 img 屬性，對應實際的成品照片
+        const combinations = {
+            'spaghetti': {
+                'carbonara': { name: 'Spaghetti Carbonara 卡波納拉義大利麵', desc: '羅馬最經典的義大利麵，細圓直麵搭配濃郁的起司蛋醬。簡單卻完美的組合，展現義大利烹飪的精髓。', img: 'img/Spaghetti_Carbonara.jpg' },
+                'aglio_e_olio': { name: 'Spaghetti Aglio e Olio 蒜油直麵', desc: '義大利南部的簡樸經典，細圓直麵搭配大蒜橄欖油。看似簡單卻需要精湛技巧，是廚師功力的試金石。', img: 'img/Spaghetti_Aglio_e_Olio.jpg' },
+                'cacio_e_pepe': { name: 'Spaghetti Cacio e Pepe 起司黑胡椒直麵', desc: '羅馬最簡樸的傑作，細圓直麵搭配佩科里諾起司與黑胡椒。看似簡單卻需要完美的火候與技巧才能呈現絲滑的醬汁。', img: 'img/Spaghetti_Cacio_e_Pepe.jpg' },
+                'nero': { name: 'Spaghetti al Nero di Seppia 墨魚直麵', desc: '威尼斯的海邊經典，細圓直麵搭配墨魚醬。獨特的黑色與海鮮的鮮美風味完美結合，是品嚐地中海風情的最佳選擇。', img: 'img/Spaghetti_Nero.jpg' }
+            },
+            'penne': {
+                'marinara': { name: 'Penne all\'Arrabbiata 辣番茄筆管麵', desc: '羅馬工人的傳統料理，筆管麵搭配香辣番茄醬。簡潔而充滿個性，辛辣的風味令人印象深刻。', img: 'img/Penne_Arrabbiata.jpg' },
+                'vodka': { name: 'Penne alla Vodka 伏特加番茄筆管麵', desc: '現代義大利經典，筆管麵搭配伏特加番茄奶油醬。伏特加的獨特風味與番茄的酸度創造出令人驚喜的平衡。', img: 'img/Penne_Vodka.jpg' }
+            },
+            'fusilli': { 
+                'pesto': { name: 'Fusilli al Pesto 青醬螺旋麵', desc: '熱那亞的夏日佳餚，螺旋麵的凹槽完美吸附青醬。新鮮的羅勒香氣與堅果風味令人陶醉。', img: 'img/Fusilli_Pesto.jpg' } 
+            },
+            'tagliatelle': { 
+                'bolognese': { name: 'Tagliatelle al Ragù 波隆那肉醬寬扁麵', desc: '波隆那的傳統搭配，寬扁麵能完美承載濃郁的肉醬。經過數小時燉煮的醬汁，風味深遠而複雜。', img: 'img/Tagliatelle_Bolognese.jpg' } 
+            },
+            'linguine': { 
+                'vongole': { name: 'Linguine alle Vongole 蛤蜊細扁麵', desc: '義大利海岸的經典，細扁麵搭配新鮮蛤蜊與白酒。鮮美的海鮮香氣與清爽的白酒完美融合，是夏日的最佳選擇。', img: 'img/Linguine_Vongole.jpg' } 
+            },
+            'fettuccine': { 
+                'alfredo': { name: 'Fettuccine Alfredo 奶油起司緞帶麵', desc: '羅馬的奶油經典，緞帶麵浸浴在濃郁的帕瑪森起司奶油醬中。簡單卻令人無法抵抗的美味，是義大利麵的終極享受。', img: 'img/Fettuccine_Alfredo.jpg' } 
+            },
+            'rigatoni': { 
+                'puttanesca': { name: 'Rigatoni alla Puttanesca 煙花女醬直管麵', desc: '那不勒斯的風味之作，粗大直管麵搭配黑橄欖與鯷魚醬。濃烈而獨特的風味充滿地中海的熱情與靈魂。', img: 'img/Rigatoni_Puttanesca.jpg' } 
+            },
+            'pappardelle': { 
+                'bolognese': { name: 'Pappardelle al Ragù 肉醬寬帶麵', desc: '托斯卡尼的豪華享受，最寬的帶狀麵搭配野味肉醬。寬大的麵條完美承載濃郁的醬汁，展現義大利北部的烹飪藝術。', img: 'img/Pappardelle_Bolognese.jpg' } 
+            },
+            'conchiglie': { 
+                'vongole': { name: 'Conchiglie ai Frutti di Mare 海鮮貝殼麵', desc: '海邊小鎮的特色，貝殼麵搭配混合海鮮。凹陷的內部完美盛裝新鮮海鮮與白酒醬汁，是海鮮愛好者的天堂。', img: 'img/Conchiglie_Vongole.jpg' } 
+            },
+            'ravioli': { 
+                'alfredo': { name: 'Ravioli al Burro e Salvia 奶油鼠尾草方形餃', desc: '北義的經典首選，起司餃搭配奶油鼠尾草醬。簡單與經典的組合讓起司的風味完全展現，是米蘭的經典代表。', img: 'img/Ravioli_Alfredo.jpg' } 
+            },
+            'lasagna': { 
+                'bolognese': { name: 'Lasagna alla Bolognese 波隆那千層麵', desc: '艾米利亞-羅馬涅大區的傳統焗烤，千層麵交替堆疊濃郁肉醬與白醬。層層分明的結構與豐富的風味使其成為義大利最著名的焗烤料理。', img: 'img/Lasagna_Bolognese.jpg' } 
+            }
+        };
+
+        // 狀態管理
+        let currentPasta = null;
+        let currentSauce = null;
+
+        // 初始化渲染列表
+        function init() {
+            const pastaList = document.getElementById('pasta-list');
+            const sauceList = document.getElementById('sauce-list');
+
+            for (const [id, data] of Object.entries(pastas)) {
+                pastaList.innerHTML += `
+                    <div class="item-card" id="card-pasta-${id}" onclick="addPasta('${id}')">
+                        <div class="item-icon">${data.icon}</div>
+                        <div class="item-name">${data.zh}</div>
+                    </div>`;
+            }
+
+            for (const [id, data] of Object.entries(sauces)) {
+                sauceList.innerHTML += `
+                    <div class="item-card" id="card-sauce-${id}" onclick="addSauce('${id}')">
+                        <div class="item-icon">${data.icon}</div>
+                        <div class="item-name">${data.zh}</div>
+                    </div>`;
+            }
+        }
+
+        function addPasta(id) { currentPasta = id; updateUI(); }
+        function addSauce(id) { currentSauce = id; updateUI(); }
+
+        function removePasta() {
+            currentPasta = null;
+            currentSauce = null; 
+            updateUI();
+        }
+
+        function removeSauce() {
+            currentSauce = null;
+            updateUI();
+        }
+
+        // 更新介面狀態 (動態刪除沒有配對的選項)
+        function updateUI() {
+            const slotPasta = document.getElementById('slot-pasta');
+            if (currentPasta) {
+                slotPasta.innerHTML = `<div>${pastas[currentPasta].icon}</div><div class="slot-hint">點擊移除</div>`;
+                slotPasta.classList.add('filled');
+            } else {
+                slotPasta.innerHTML = `<span class="slot-hint">空</span>`;
+                slotPasta.classList.remove('filled');
+            }
+
+            const slotSauce = document.getElementById('slot-sauce');
+            if (currentSauce) {
+                slotSauce.innerHTML = `<div>${sauces[currentSauce].icon}</div><div class="slot-hint">點擊移除</div>`;
+                slotSauce.classList.add('filled');
+            } else {
+                slotSauce.innerHTML = `<span class="slot-hint">空</span>`;
+                slotSauce.classList.remove('filled');
+            }
+
+            document.querySelectorAll("[id^='card-pasta-']").forEach(el => el.classList.remove('selected'));
+            if (currentPasta) document.getElementById(`card-pasta-${currentPasta}`).classList.add('selected');
+
+            document.querySelectorAll("[id^='card-sauce-']").forEach(el => el.classList.remove('selected'));
+            if (currentSauce) document.getElementById(`card-sauce-${currentSauce}`).classList.add('selected');
+            
+            document.querySelectorAll("[id^='card-sauce-']").forEach(el => {
+                const sauceId = el.id.replace('card-sauce-', '');
+                if (currentPasta) {
+                    if (combinations[currentPasta] && combinations[currentPasta][sauceId]) {
+                        el.style.display = 'block';
+                    } else {
+                        el.style.display = 'none'; 
+                    }
+                } else {
+                    el.style.display = 'block'; 
+                }
+            });
+
+            document.querySelectorAll("[id^='card-pasta-']").forEach(el => {
+                const pastaId = el.id.replace('card-pasta-', '');
+                if (currentSauce) {
+                    if (combinations[pastaId] && combinations[pastaId][currentSauce]) {
+                        el.style.display = 'block';
+                    } else {
+                        el.style.display = 'none'; 
+                    }
+                } else {
+                    el.style.display = 'block'; 
+                }
+            });
+
+            const cookBtn = document.getElementById('cook-btn');
+            if (currentPasta && currentSauce) {
+                cookBtn.classList.add('ready');
+                cookBtn.innerText = "🔥 開始拌炒！";
+            } else {
+                cookBtn.classList.remove('ready');
+                cookBtn.innerText = "等待食材放入...";
+            }
+        }
+
+        // 開始烹煮動畫與邏輯
+        function startCooking() {
+            const pot = document.getElementById('main-pot');
+            const status = document.getElementById('cooking-status');
+            const cookBtn = document.getElementById('cook-btn');
+            
+            cookBtn.classList.remove('ready');
+            cookBtn.innerText = "烹煮中...";
+            pot.classList.add('is-cooking');
+            status.innerText = "主廚正在用猛火翻炒中...";
+
+            setTimeout(() => {
+                pot.classList.remove('is-cooking');
+                status.innerText = "";
+                showResult();
+            }, 2000);
+        }
+
+        // 顯示最終結果 (動態替換背景圖)
+        function showResult() {
+            const resultData = combinations[currentPasta][currentSauce];
+            document.getElementById('result-title').innerText = resultData.name;
+            document.getElementById('result-desc').innerText = resultData.desc;
+            
+            // 動態替換視窗的背景圖片！加入深色漸層 (rgba(0,0,0, 0.4) ~ 0.85) 以確保文字清晰
+            const modalContent = document.getElementById('result-modal-content');
+            modalContent.style.background = `linear-gradient(to bottom, rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.85)), url('${resultData.img}')`;
+            modalContent.style.backgroundSize = 'cover';
+            modalContent.style.backgroundPosition = 'center';
+            
+            document.getElementById('result-modal').style.display = 'flex';
+        }
+
+        // 關閉視窗並重置
+        function closeModal() {
+            document.getElementById('result-modal').style.display = 'none';
+            removePasta(); 
+        }
+
+        // 啟動程式
+        window.onload = init;
+    </script>
+</body>
+</html>
