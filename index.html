@@ -232,9 +232,61 @@
             .text-box { text-align: center; }
             .text-box p { text-align: left; }
         }
+
+
+        /* --- 全域導覽列樣式 --- */
+.global-nav {
+    position: sticky;
+    top: 0;
+    width: 100%;
+    background-color: rgba(242, 239, 233, 0.95); /* 帶透明度的底色 */
+    backdrop-filter: blur(5px);
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    justify-content: center;
+    gap: 40px;
+    padding: 15px 0;
+    z-index: 1000;
+    font-family: 'Helvetica Neue', sans-serif;
+    box-sizing: border-box; /* 重要：確保 padding 不會撐開寬度 */
+}
+
+.nav-item {
+    text-decoration: none;
+    color: var(--text-light);
+    font-size: 0.9rem;
+    letter-spacing: 2px;
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.nav-item:hover, .nav-item.active {
+    color: var(--accent-terra);
+}
+
+/* 下底線動畫 */
+.nav-item::after {
+    content: '';
+    position: absolute;
+    width: 0;
+    height: 1px;
+    bottom: -5px;
+    left: 0;
+    background-color: var(--accent-terra);
+    transition: width 0.3s ease;
+}
+
+.nav-item:hover::after, .nav-item.active::after {
+    width: 100%;
+}
     </style>
 </head>
 <body>
+<nav class="global-nav">
+    <a href="index.html" class="nav-item active">首頁</a>
+    <a href="pasta.html" class="nav-item">義大利麵小廚房</a>
+    <a href="https://pastaworld-95xygkqt.manus.space/">義大利麵百科</a>
+</nav>
 
     <!-- 喚醒區塊 -->
     <header class="hero">
