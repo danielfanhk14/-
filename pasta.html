@@ -96,15 +96,17 @@
             font-family: 'Helvetica Neue', sans-serif;
         }
 
+        /* --- 確保 game-board 本身也不限制高度 --- */
         .game-board {
             display: flex;
             justify-content: center;
-            align-items: stretch;
+            align-items: flex-start; /* 改為 flex-start 讓面板對齊頂部 */
             width: 100%;
             max-width: 1200px;
             gap: 30px;
         }
 
+        /* --- 修改桌面版側邊欄樣式 --- */
         .side-panel {
             flex: 1;
             background-color: var(--panel-bg);
@@ -112,8 +114,9 @@
             border-radius: 4px;
             padding: 25px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.03);
-            max-height: 75vh;
-            overflow-y: auto;
+            /* --- 關鍵修改：移除高度限制與捲軸 --- */
+            max-height: none; 
+            overflow-y: visible; 
         }
 
         .side-panel h2 {
@@ -125,8 +128,8 @@
             padding-bottom: 15px;
             color: var(--text-dark);
             border-bottom: 1px solid var(--border-color);
-            position: sticky;
-            top: 0;
+            /* --- 關鍵修改：移除 sticky，讓標題隨頁面捲動 --- */
+            position: static; 
             background: var(--panel-bg);
             z-index: 10;
         }
@@ -168,7 +171,7 @@
 
         .pot-slots { display: flex; align-items: center; gap: 20px; margin-bottom: 40px; }
         .slot {
-            width: 100px; height: 100px;
+            width: 150px; height: 150px;
             border: 1px dashed var(--text-light);
             border-radius: 50%;
             display: flex; flex-direction: column; justify-content: center; align-items: center;
@@ -204,7 +207,7 @@
         }
 
         @keyframes popIn { 0% { transform: scale(0.8); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
-        .result-icon { font-size: 4rem; margin-bottom: 10px; text-shadow: 0 4px 10px rgba(0,0,0,0.5); }
+        .result-icon { font-size: 2rem; margin-bottom: 10px; text-shadow: 0 4px 10px rgba(0,0,0,0.5); }
         .result-title { color: #f9d877; font-size: 1.6rem; margin-bottom: 15px; text-shadow: 1px 1px 5px rgba(0,0,0,0.8); }
         .result-desc { line-height: 1.6; color: #f0f0f0; margin-bottom: 30px; text-align: justify; text-shadow: 1px 1px 4px rgba(0,0,0,0.8); }
         .close-btn { background: #899C8E; color: #fff; border: none; padding: 12px 30px; border-radius: 30px; cursor: pointer; font-size: 1.1rem; font-weight: bold; }
@@ -215,21 +218,74 @@
             letter-spacing: 3px; cursor: pointer; transition: all 0.4s ease;
         }
         .badge-btn:hover { background: var(--text-dark); color: var(--bg-base); }
+        
+        /* 炒鍋效果 */
+        @keyframes intense-fry { 
+  0% { 
+    transform: translateY(0) scale(1) rotate(0deg); 
+  } 
+  50% {
+    /* 跳到最高點時稍微向前傾斜 */
+    transform: translateY(-8px) scale(1.05) rotate(-3deg);
+  }
+  100% { 
+    transform: translateY(0) scale(1) rotate(0deg); 
+  } 
+}
 
-        .is-cooking { animation: simmer 0.6s infinite alternate ease-in-out; }
-        @keyframes simmer { from { transform: scale(1); } to { transform: scale(1.05); } }
+/* 由於在 keyframes 裡完整定義了來回，可以移除 alternate */
+.is-cooking { 
+  animation: intense-fry 0.3s infinite ease-in-out; 
+}
+
+
 
         @media (max-width: 900px) {
-            .game-board { flex-direction: column; align-items: center; }
-            .side-panel { width: 100%; max-height: none; }
-            .center-panel { width: 100%; order: -1; }
+            /* 調整容器為垂直排列 */
+            .game-board { 
+                flex-direction: column; 
+                align-items: center; 
+                gap: 20px;
+            }
+
+            /* 確保面板寬度撐滿 */
+            .side-panel, .center-panel { 
+                width: 100%; 
+                max-height: none; 
+            }
+
+            /* --- 重新定義手機版順序 --- */
+            
+            /* 1. 選取麵體 (原本在左，設為 order 1) */
+            .side-panel:first-child { 
+                order: 1; 
+            }
+
+            /* 2. 慢熬醬料 (原本在右，設為 order 2) */
+            .side-panel:last-child { 
+                order: 2; 
+            }
+
+            /* 3. 烹飪區 (原本在中間，設為 order 3) */
+            .center-panel { 
+                order: 3; 
+                padding: 40px 20px;
+            }
+
+            /* 優化：手機版網格改為三欄讓頁面不要太長 (選填) */
+            .grid-list {
+                grid-template-columns: repeat(3, 1fr);
+            }
+            
+            .item-icon { font-size: 1.8rem; }
+            .item-name { font-size: 0.75rem; }
         }
     </style>
 </head>
 <body>
 
 <nav class="global-nav">
-    <a href="index.html" class="nav-item">首頁</a>
+    <a href="index.html" class="nav-item">旅程首頁</a>
     <a href="pasta.html" class="nav-item active">義大利麵小廚房</a>
     <a href="https://pastaworld-95xygkqt.manus.space/" class="nav-item">義大利麵百科</a>
 </nav>
@@ -268,7 +324,7 @@
 
 <div class="modal-overlay" id="result-modal">
     <div class="modal-content" id="result-modal-content">
-        <div class="result-icon">✦</div>
+        <div class="result-icon">上桌了</div>
         <h2 class="result-title" id="result-title">名稱</h2>
         <div class="result-desc" id="result-desc">說明</div>
         <button class="close-btn" onclick="closeModal()">再做一盤</button>
@@ -277,54 +333,76 @@
 
 <script>
     const pastas = {
-        'spaghetti': { icon: '<img src="img/Spaghetti.png" style="width: 60px; height: 60px;">', zh: '細圓直麵' },
-        'penne': { icon: '<img src="img/Penne.png" style="width: 60px; height: 60px;">', zh: '筆管麵' },
-        'fusilli': { icon: '<img src="img/Fusilli.png" style="width: 60px; height: 60px;">', zh: '螺旋麵' },
-        'tagliatelle': { icon: '<img src="img/Tagliatelle.png" style="width: 60px; height: 60px;">', zh: '寬扁麵' },
-        'rigatoni': { icon: '<img src="img/Rigatoni.png" style="width: 60px; height: 60px;">', zh: '直管麵' },
-        'linguine': { icon: '<img src="img/Linguine.png" style="width: 60px; height: 60px;">', zh: '細扁麵' },
-        'ravioli': { icon: '<img src="img/Ravioli.png" style="width: 60px; height: 60px;">', zh: '方形餃' },
-        'pappardelle': { icon: '<img src="img/Pappardelle.png" style="width: 60px; height: 60px;">', zh: '寬帶麵' },
-        'fettuccine': { icon: '<img src="img/Fettuccine.png" style="width: 60px; height: 60px;">', zh: '緞帶麵' },
-        'conchiglie': { icon: '<img src="img/Conchiglie.png" style="width: 60px; height: 60px;">', zh: '貝殼麵' },
-        'lasagna': { icon: '<img src="img/Lasagna.png" style="width: 60px; height: 60px;">', zh: '千層麵' }
+        'spaghetti': { icon: '<img src="img/Spaghetti.png" style="width: 80px; height: 80px;">', zh: '細圓直麵' },
+        'penne': { icon: '<img src="img/Penne.png" style="width: 80px; height: 80px;">', zh: '筆管麵' },
+        'fusilli': { icon: '<img src="img/Fusilli.png" style="width: 80px; height: 80px;">', zh: '螺旋麵' },
+        'tagliatelle': { icon: '<img src="img/Tagliatelle.png" style="width: 80px; height: 80px;">', zh: '寬扁麵' },
+        'rigatoni': { icon: '<img src="img/Rigatoni.png" style="width: 80px; height: 80px;">', zh: '直管麵' },
+        'linguine': { icon: '<img src="img/Linguine.png" style="width: 80px; height: 80px;">', zh: '細扁麵' },
+        'ravioli': { icon: '<img src="img/Ravioli.png" style="width: 80px; height: 80px;">', zh: '方形餃' },
+        'pappardelle': { icon: '<img src="img/Pappardelle.png" style="width: 80px; height: 80px;">', zh: '寬帶麵' },
+        'fettuccine': { icon: '<img src="img/Fettuccine.png" style="width: 80px; height: 80px;">', zh: '緞帶麵' },
+        'conchiglie': { icon: '<img src="img/Conchiglie.png" style="width: 80px; height: 80px;">', zh: '貝殼麵' },
+        'lasagna': { icon: '<img src="img/Lasagna.png" style="width: 80px; height: 80px;">', zh: '千層麵' }
     };
 
     const sauces = {
-        'marinara': { icon: '🍅', zh: '經典紅醬' },
-        'carbonara': { icon: '🥓', zh: '卡邦尼醬' },
-        'pesto': { icon: '🌿', zh: '青醬' },
-        'bolognese': { icon: '🥩', zh: '波隆那肉醬' },
-        'aglio_e_olio': { icon: '🧄', zh: '蒜油醬' },
-        'alfredo': { icon: '🧀', zh: '奶油起司醬' },
-        'puttanesca': { icon: '🐟', zh: '煙花女醬' },
-        'vongole': { icon: '🦪', zh: '蛤蜊醬' },
-        'vodka': { icon: '🍸', zh: '伏特加番茄醬' },
-        'cacio_e_pepe': { icon: '🧂', zh: '起司黑胡椒醬' },
-        'nero': { icon: '🦑', zh: '墨魚醬' }
+        'marinara': { icon:'<img src="img/Marinara.png" style="width: 80px; height: 80px;">', zh: '經典紅醬' },
+        'carbonara': { icon: '<img src="img/Carbonara.png" style="width: 80px; height: 80px;">', zh: '卡邦尼醬' },
+        'pesto': { icon: '<img src="img/Pesto.png" style="width: 80px; height: 80px;">', zh: '青醬' },
+        'bolognese': { icon: '<img src="img/Bolognese.png" style="width: 80px; height: 80px;">', zh: '波隆那肉醬' },
+        'aglio_e_olio': { icon: '<img src="img/Aglio_e_Olio.png" style="width: 80px; height: 80px;">', zh: '蒜油醬' },
+        'alfredo': { icon: '<img src="img/Alfredo.png" style="width: 80px; height: 80px;">', zh: '奶油起司醬' },
+        'puttanesca': { icon: '<img src="img/Puttanesca.png" style="width: 80px; height: 80px;">', zh: '煙花女醬' },
+        'vongole': { icon: '<img src="img/Vongole.png" style="width: 80px; height: 80px;">', zh: '蛤蜊醬' },
+        'vodka': { icon: '<img src="img/Vodka_Sauce.png" style="width: 80px; height: 80px;">', zh: '伏特加番茄醬' },
+        'cacio_e_pepe': { icon: '<img src="img/Cacio_e_Pepe.png" style="width: 80px; height: 80px;">', zh: '起司黑胡椒醬' },
+        'nero': { icon: '<img src="img/Nero.png" style="width: 80px; height: 80px;">', zh: '墨魚醬' },
+        'three-cup_chicken': { icon: '<img src="img/Three-Cup_Chicken.png" style="width: 80px; height: 80px;">', zh: '三杯雞' },
+        'sakura_shrimp': { icon: '<img src="img/Sakura_Shrimp.png" style="width: 80px; height: 80px;">', zh: '櫻花蝦' },
     };
 
     const combinations = {
-        'spaghetti': {
-            'carbonara': { name: 'Spaghetti Carbonara 卡波納拉義大利麵', desc: '羅馬最經典的義大利麵，細圓直麵搭配濃郁的起司蛋醬。簡單卻完美的組合。', img: 'img/Spaghetti_Carbonara.jpg' },
-            'aglio_e_olio': { name: 'Spaghetti Aglio e Olio 蒜油直麵', desc: '細圓直麵搭配大蒜橄欖油。看似簡單卻需要精湛技巧。', img: 'img/Spaghetti_Aglio_e_Olio.jpg' },
-            'cacio_e_pepe': { name: 'Spaghetti Cacio e Pepe 起司黑胡椒直麵', desc: '細圓直麵搭配佩科里諾起司與黑胡椒。', img: 'img/Spaghetti_Cacio_e_Pepe.jpg' },
-            'nero': { name: 'Spaghetti al Nero di Seppia 墨魚直麵', desc: '細圓直麵搭配墨魚醬。獨特的黑色與海鮮風味。', img: 'img/Spaghetti_Nero.jpg' }
-        },
-        'penne': {
-            'marinara': { name: 'Penne all\'Arrabbiata 辣番茄筆管麵', desc: '筆管麵搭配香辣番茄醬。簡潔而充滿個性。', img: 'img/Penne_Arrabbiata.jpg' },
-            'vodka': { name: 'Penne alla Vodka 伏特加番茄筆管麵', desc: '現代義大利經典，搭配伏特加番茄奶油醬。', img: 'img/Penne_Vodka.jpg' }
-        },
-        'fusilli': { 'pesto': { name: 'Fusilli al Pesto 青醬螺旋麵', desc: '螺旋麵的凹槽完美吸附青醬。', img: 'img/Fusilli_Pesto.jpg' } },
-        'tagliatelle': { 'bolognese': { name: 'Tagliatelle al Ragù 波隆那肉醬寬扁麵', desc: '寬扁麵能完美承載濃郁的肉醬。', img: 'img/Tagliatelle_Bolognese.jpg' } },
-        'linguine': { 'vongole': { name: 'Linguine alle Vongole 蛤蜊細扁麵', desc: '細扁麵搭配新鮮蛤蜊與白酒。', img: 'img/Linguine_Vongole.jpg' } },
-        'fettuccine': { 'alfredo': { name: 'Fettuccine Alfredo 奶油起司緞帶麵', desc: '緞帶麵浸浴在濃郁的帕瑪森起司奶油醬中。', img: 'img/Fettuccine_Alfredo.jpg' } },
-        'rigatoni': { 'puttanesca': { name: 'Rigatoni alla Puttanesca 煙花女醬直管麵', desc: '粗大直管麵搭配黑橄欖與鯷魚醬。', img: 'img/Rigatoni_Puttanesca.jpg' } },
-        'pappardelle': { 'bolognese': { name: 'Pappardelle al Ragù 肉醬寬帶麵', desc: '寬大麵條完美承載濃郁肉醬。', img: 'img/Pappardelle_Bolognese.jpg' } },
-        'conchiglie': { 'vongole': { name: 'Conchiglie ai Frutti di Mare 海鮮貝殼麵', desc: '貝殼麵搭配混合海鮮，凹陷內部完美盛裝醬汁。', img: 'img/Conchiglie_Vongole.jpg' } },
-        'ravioli': { 'alfredo': { name: 'Ravioli al Burro e Salvia 奶油鼠尾草方形餃', desc: '起司餃搭配奶油鼠尾草醬。', img: 'img/Ravioli_Alfredo.jpg' } },
-        'lasagna': { 'bolognese': { name: 'Lasagna alla Bolognese 波隆那千層麵', desc: '交替堆疊濃郁肉醬與白醬。', img: 'img/Lasagna_Bolognese.jpg' } }
-    };
+    'spaghetti': {
+        'carbonara': { name: 'Spaghetti Carbonara 卡波納拉義大利麵', desc: '羅馬最經典的義大利麵，細圓直麵搭配濃郁的起司蛋醬。簡單卻完美的組合。', img: 'img/Spaghetti_Carbonara.jpg' },
+        'aglio_e_olio': { name: 'Spaghetti Aglio e Olio 蒜油直麵', desc: '義大利南部的簡樸經典，細圓直麵搭配大蒜橄欖油。是廚師功力的試金石。', img: 'img/Spaghetti_Aglio_e_Olio.jpg' },
+        'cacio_e_pepe': { name: 'Spaghetti Cacio e Pepe 起司黑胡椒直麵', desc: '羅馬最簡樸的傑作，細圓直麵搭配帕克里諾起司與黑胡椒，呈現絲滑醬汁。', img: 'img/Spaghetti_Cacio_e_Pepe.jpg' },
+        'nero': { name: 'Spaghetti al Nero di Seppia 墨魚直麵', desc: '威尼斯的海邊經典，獨特的黑色墨魚醬與海鮮的鮮美風味完美結合。', img: 'img/Spaghetti_Nero.jpg' },
+        'three-cup_chicken': { name: 'Three-Cup Chicken 三杯雞義大利麵', desc: '將台灣熱炒店靈魂「三杯雞」重新演繹，讓濃郁麻油、醬香與九層塔香氣鎖在麵條中。', img: 'img/Three-Cup_Chicken_Pasta.png' },
+        'sakura_shrimp': { name: 'Sakura Shrimp 櫻花蝦義大利麵', desc: '利用台灣東港名產櫻花蝦的獨特香氣，搭配西式清炒手法，轉化為層次豐富的精緻麵食。', img: 'img/Sakura_Shrimp_Pasta.png' }
+    },
+    'penne': {
+        'marinara': { name: 'Penne all\'Arrabbiata 辣番茄筆管麵', desc: '筆管麵搭配香辣番茄醬。簡潔而充滿個性，辛辣的風味令人印象深刻。', img: 'img/Penne_Arrabbiata.jpg' },
+        'vodka': { name: 'Penne alla Vodka 伏特加番茄筆管麵', desc: '現代義大利經典，伏特加的獨特風味與番茄的酸度創造出令人驚艷的平衡。', img: 'img/Penne_Vodka.jpg' }
+    },
+    'fusilli': { 
+        'pesto': { name: 'Fusilli al Pesto 青醬螺旋麵', desc: '熱那亞的夏日佳餚，螺旋麵的凹槽完美吸附青醬，充滿羅勒香氣。', img: 'img/Fusilli_Pesto.jpg' } 
+    },
+    'tagliatelle': { 
+        'bolognese': { name: 'Tagliatelle al Ragù 波隆那肉醬寬扁麵', desc: '傳統波隆那肉醬與寬扁麵的完美結合，經過數小時熬煮，風味深邃。', img: 'img/Tagliatelle_Bolognese.jpg' } 
+    },
+    'linguine': { 
+        'vongole': { name: 'Linguine alle Vongole 蛤蜊細扁麵', desc: '義大利海岸經典，細扁麵搭配新鮮蛤蜊與白酒，散發清爽的海鮮香氣。', img: 'img/Linguine_Vongole.jpg' } 
+    },
+    'fettuccine': { 
+        'alfredo': { name: 'Fettuccine Alfredo 奶油起司緞帶麵', desc: '羅馬的奶油經典，緞帶麵浸浴在濃郁的帕瑪森起司奶油醬中。', img: 'img/Fettuccine_Alfredo.jpg' } 
+    },
+    'rigatoni': { 
+        'puttanesca': { name: 'Rigatoni alla Puttanesca 煙花女醬直管麵', desc: '那不勒斯風味，直管麵搭配黑橄欖與鳳尾魚醬，風味濃烈且充滿靈魂。', img: 'img/Rigatoni_Puttanesca.jpg' } 
+    },
+    'pappardelle': { 
+        'bolognese': { name: 'Pappardelle al Ragù 波隆那肉醬寬帶麵', desc: '寬帶麵能完美承載濃郁肉醬，適合喜愛飽足口感的饕客。', img: 'img/Pappardelle_Bolognese.jpg' } 
+    },
+    'conchiglie': { 
+        'vongole': { name: 'Conchiglie ai Frutti di Mare 海鮮貝殼麵', desc: '貝殼麵內部完美盛裝海鮮醬汁，是海鮮愛好者的天堂。', img: 'img/Conchiglie_Vongole.jpg' } 
+    },
+    'ravioli': { 
+        'alfredo': { name: 'Ravioli Alfredo 奶油起司方形餃', desc: '方形餃內餡搭配濃郁的奶油起司醬，簡單卻能帶出麵皮與起司的純粹。', img: 'img/Ravioli_Alfredo.jpg' } 
+    },
+    'lasagna': { 
+        'bolognese': { name: 'Lasagna alla Bolognese 波隆那千層麵', desc: '層層堆疊肉醬與白醬，經過烘烤呈現豐富的結構與風味。', img: 'img/Lasagna_Bolognese.jpg' } 
+    }
+};
 
     let currentPasta = null;
     let currentSauce = null;
@@ -396,7 +474,7 @@
         document.getElementById('result-title').innerText = resultData.name;
         document.getElementById('result-desc').innerText = resultData.desc;
         const modalContent = document.getElementById('result-modal-content');
-        modalContent.style.background = `linear-gradient(to bottom, rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.85)), url('${resultData.img}') center/cover`;
+        modalContent.style.background = `linear-gradient(to bottom, rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.5)), url('${resultData.img}') center/cover`;
         document.getElementById('result-modal').style.display = 'flex';
     }
 
