@@ -279,6 +279,116 @@
 .nav-item:hover::after, .nav-item.active::after {
     width: 100%;
 }
+
+        /* --- 橫式流程圖專屬樣式 --- */
+.horizontal-timeline {
+    position: relative;
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    padding: 100px 0;
+    margin-top: 20px;
+}
+
+.timeline-line {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    width: 100%;
+    height: 1px;
+    background-color: var(--border-color);
+    z-index: 1;
+}
+
+.timeline-node {
+    position: relative;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    z-index: 2;
+    padding: 0 10px;
+}
+
+.node-dot {
+    width: 12px;
+    height: 12px;
+    background-color: var(--accent-terra);
+    border-radius: 50%;
+    margin-top: -6px; /* 讓圓點對齊中心線 */
+    position: absolute;
+    top: 50%;
+}
+
+.node-content {
+    text-align: center;
+    position: absolute;
+}
+
+/* 奇數節點在線上，偶數節點在線下，增加錯落感 */
+.timeline-node:nth-child(odd) .node-content {
+    bottom: 60%;
+}
+
+.timeline-node:nth-child(even) .node-content {
+    top: 60%;
+}
+
+.node-content .year {
+    font-family: 'Helvetica Neue', sans-serif;
+    font-weight: bold;
+    color: var(--accent-wheat);
+    font-size: 0.85rem;
+    letter-spacing: 1px;
+}
+
+.node-content h3 {
+    font-size: 1.1rem;
+    margin: 5px 0;
+    color: var(--text-dark);
+}
+
+.node-content p {
+    font-size: 0.85rem;
+    color: var(--text-light);
+    max-width: 200px;
+    margin: 0 auto;
+    line-height: 1.4;
+}
+
+/* 手機版自動切換回垂直排列以利閱讀 */
+@media (max-width: 900px) {
+    .horizontal-timeline {
+        flex-direction: column;
+        padding: 20px 0;
+        align-items: flex-start;
+        padding-left: 30px;
+    }
+    .timeline-line {
+        width: 1px;
+        height: 100%;
+        left: 10px;
+        top: 0;
+    }
+    .timeline-node {
+        flex-direction: row;
+        margin-bottom: 40px;
+        width: 100%;
+    }
+    .node-dot {
+        left: -25px;
+        top: 10px;
+    }
+    .node-content {
+        position: static;
+        text-align: left;
+    }
+    .timeline-node:nth-child(odd) .node-content,
+    .timeline-node:nth-child(even) .node-content {
+        bottom: auto;
+        top: auto;
+    }
+}
     </style>
 </head>
 <body>
@@ -342,7 +452,55 @@
             </div>
         </div>
     </section>
+    <!-- STAGE 03.5: 進化流程 -->
+<section class="story-section" id="stage-history">
+    <div class="content-card" style="flex-direction: column; align-items: flex-start;">
+        <div class="step-label">Evolution / 進化</div>
+        <h2 style="margin-bottom: 40px;">跨越千年的飲食流變</h2>
+        
+        <div class="horizontal-timeline">
+            <div class="timeline-node">
+                <div class="node-content">
+                    <span class="year">5th Century</span>
+                    <h3>阿拉伯起源</h3>
+                    <p>發明「乾麵條」以便在沙漠長途攜帶，這是麵食保存技術的起點。</p>
+                </div>
+                <div class="node-dot"></div>
+            </div>
 
+            <div class="timeline-node">
+                <div class="node-content">
+                    <span class="year">13th Century</span>
+                    <h3>地中海普及</h3>
+                    <p>馬可波羅時代，麵食逐漸成為義大利沿海地區的重要貿易商品與主食。</p>
+                </div>
+                <div class="node-dot"></div>
+            </div>
+
+            <div class="timeline-node">
+                <div class="node-content">
+                    <span class="year">17th Century</span>
+                    <h3>工業與紅醬</h3>
+                    <p>機械擠壓機問世提升產量，並與美洲傳入的番茄結合，奠定現代印象。</p>
+                </div>
+                <div class="node-dot"></div>
+            </div>
+
+            <div class="timeline-node">
+                <div class="node-content">
+                    <span class="year">Today</span>
+                    <h3>全球工藝</h3>
+                    <p>演變為超過 300 種形狀，成為連結風土與全球文化的藝術語言。</p>
+                </div>
+                <div class="node-dot"></div>
+            </div>
+            
+            <div class="timeline-line"></div>
+        </div>
+    </div>
+</section>
+
+    
     <!-- STAGE 04: 醬汁融合 -->
     <section class="story-section" id="stage-4">
         <div class="content-card">
