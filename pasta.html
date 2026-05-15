@@ -423,7 +423,7 @@
     function removePasta() { currentPasta = null; currentSauce = null; updateUI(); }
     function removeSauce() { currentSauce = null; updateUI(); }
 
-    function updateUI() {
+       function updateUI() {
         const slotPasta = document.getElementById('slot-pasta');
         slotPasta.innerHTML = currentPasta ? `<div>${pastas[currentPasta].icon}</div><div class="slot-hint">點擊移除</div>` : `<span class="slot-hint">空</span>`;
         currentPasta ? slotPasta.classList.add('filled') : slotPasta.classList.remove('filled');
@@ -432,10 +432,18 @@
         slotSauce.innerHTML = currentSauce ? `<div>${sauces[currentSauce].icon}</div><div class="slot-hint">點擊移除</div>` : `<span class="slot-hint">空</span>`;
         currentSauce ? slotSauce.classList.add('filled') : slotSauce.classList.remove('filled');
 
+        // --- 修改後的麵體清單邏輯 ---
         document.querySelectorAll("[id^='card-pasta-']").forEach(el => {
             const id = el.id.replace('card-pasta-', '');
             el.classList.toggle('selected', id === currentPasta);
-            el.style.display = (!currentSauce || (combinations[id] && combinations[id][currentSauce])) ? 'block' : 'none';
+            
+            if (currentPasta) {
+                // 如果已經選了麵體，只顯示被選中的那一個
+                el.style.display = (id === currentPasta) ? 'block' : 'none';
+            } else {
+                // 如果還沒選麵體，根據醬汁過濾（或全部顯示）
+                el.style.display = (!currentSauce || (combinations[id] && combinations[id][currentSauce])) ? 'block' : 'none';
+            }
         });
 
         document.querySelectorAll("[id^='card-sauce-']").forEach(el => {
