@@ -425,11 +425,11 @@
 
        function updateUI() {
         const slotPasta = document.getElementById('slot-pasta');
-        slotPasta.innerHTML = currentPasta ? `<div>${pastas[currentPasta].icon}</div><div class="slot-hint">點擊移除</div>` : `<span class="slot-hint">空</span>`;
+        slotPasta.innerHTML = currentPasta ? `<div>${pastas[currentPasta].icon}</div><div class="slot-hint">點擊移除</div>` : `<span class="slot-hint">選麵體<br>空</span>`;
         currentPasta ? slotPasta.classList.add('filled') : slotPasta.classList.remove('filled');
 
         const slotSauce = document.getElementById('slot-sauce');
-        slotSauce.innerHTML = currentSauce ? `<div>${sauces[currentSauce].icon}</div><div class="slot-hint">點擊移除</div>` : `<span class="slot-hint">空</span>`;
+        slotSauce.innerHTML = currentSauce ? `<div>${sauces[currentSauce].icon}</div><div class="slot-hint">點擊移除</div>` : `<span class="slot-hint">選醬料br<>空</span>`;
         currentSauce ? slotSauce.classList.add('filled') : slotSauce.classList.remove('filled');
 
         // --- 修改後的麵體清單邏輯 ---
