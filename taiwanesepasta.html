@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>義大利麵在台灣：從洋食初探、台味翻轉到正宗工藝與創新的味覺進化史</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;600;700&display=swap" rel="stylesheet">
+<!-- 引入 page-flip 核心函式庫 -->
+<script src="https://cdn.jsdelivr.net/npm/page-flip/dist/js/page-flip.browser.js"></script>
+
+<style>
+    :root {
+        --border-color: #d4c5b0;
+        --text-light: #7f8c8d;
+        --accent-terra: #8b4513;
+    }
+
+    body {
+        background-color: #2c3e50;
+        background-image: radial-gradient(circle, #34495e, #2c3e50);
+        display: flex;
+        flex-direction: column; /* 讓 nav 在頂部，書本在下方 */
+        justify-content: flex-start;
+        align-items: center;
+        height: 100vh;
+        margin: 0;
+        font-family: 'Noto Serif TC', serif;
+        overflow: hidden;
+    }
+/* --- 全域導覽列樣式 --- */
+.global-nav {
+    position: sticky;
+    top: 0;
+    width: 100%;
+    background-color: rgba(242, 239, 233, 0.95); /* 帶透明度的底色 */
+    backdrop-filter: blur(5px);
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    justify-content: center;
+    gap: 40px;
+    padding: 15px 0;
+    z-index: 1000;
+    font-family: 'Helvetica Neue', sans-serif;
+    box-sizing: border-box; /* 重要：確保 padding 不會撐開寬度 */
+}
+
+.nav-item {
+    text-decoration: none;
+    color: var(--text-light);
+    font-size: 0.9rem;
+    letter-spacing: 2px;
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.nav-item:hover, .nav-item.active {
+    color: var(--accent-terra);
+}
+
+/* 下底線動畫 */
+.nav-item::after {
+    content: '';
+    position: absolute;
+    width: 0;
+    height: 1px;
+    bottom: -5px;
+    left: 0;
+    background-color: var(--accent-terra);
+    transition: width 0.3s ease;
+}
+
+.nav-item:hover::after, .nav-item.active::after {
+    width: 100%;
+}
+    
+    .container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 100%;
+        flex-grow: 1; /* 佔滿剩餘高度以達到書本置中效果 */
+    }
+
+    #flipbook {
+        box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+    }
+
+    .page {
+        background-color: #fdfaf5;
+        padding: 40px 50px;
+        box-sizing: border-box;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        color: #333;
+        background-image: linear-gradient(to right, #f4ecd8 0%, #fdfaf5 10%, #fdfaf5 90%, #f4ecd8 100%);
+    }
+
+    .page[data-density="hard"] {
+        background-color: #8b4513;
+        background-image: linear-gradient(to right, #6b340e 0%, #8b4513 10%, #8b4513 90%, #6b340e 100%);
+        color: #fff;
+        border: 2px solid #5c2e0b;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+    }
+
+    .page.--right {
+        border-left: 1px solid #d4c5b0;
+        box-shadow: inset 5px 0 10px rgba(0,0,0,0.05);
+    }
+    .page.--left {
+        border-right: 1px solid #d4c5b0;
+        box-shadow: inset -5px 0 10px rgba(0,0,0,0.05);
+    }
+
+    h1 { font-size: 28px; font-weight: 700; line-height: 1.5; text-shadow: 1px 1px 3px rgba(0,0,0,0.3); margin: 0 0 30px 0; text-align: center;}
+    h2 { font-size: 20px; color: #8b4513; font-weight: 600; margin-bottom: 20px; border-bottom: 1px solid #eaddc5; padding-bottom: 10px; line-height: 1.4;}
+    p { line-height: 1.8; font-size: 15px; text-align: justify; margin-bottom: 15px; text-indent: 30px; }
+    
+    .source-list { font-size: 13px; line-height: 1.6; margin-top: 10px; padding-left: 20px; text-align: left; }
+    .source-list li { margin-bottom: 10px; }
+    .source-list a { color: #8b4513; text-decoration: none; word-break: break-all; }
+    
+    .page-num { position: absolute; bottom: 25px; font-size: 13px; color: #999; font-family: sans-serif; }
+    .page.--right .page-num { right: 30px; }
+    .page.--left .page-num { left: 30px; }
+    
+    .instruction {
+        position: absolute;
+        bottom: 20px;
+        width: 100%;
+        text-align: center;
+        color: #bdc3c7;
+        font-family: sans-serif;
+        font-size: 14px;
+        pointer-events: none;
+        letter-spacing: 1px;
+    }
+</style>
+</head>
+<body>
+
+<nav class="global-nav">
+    <a href="index.html" class="nav-item">旅程</a>
+    <a href="taiwanesepasta.html" class="nav-item active">義大利麵在台灣</a>
+    <a href="pasta.html" class="nav-item">互動小廚房</a>
+    <a href="https://pastaworld-95xygkqt.manus.space/" class="nav-item" target="_blank">義大利麵百科</a>
+</nav>
+
+<div class="container">
+    <div id="flipbook">
+        
+        <!-- 1. 封面 (硬皮) -->
+        <div class="page" data-density="hard">
+            <div style="width: 100%; padding: 0 20px; box-sizing: border-box;">
+                <h1>義大利麵在台灣：<br>從洋食初探、台味翻轉<br>到正宗工藝與創新的<br>味覺進化史</h1>
+                <div style="width: 50px; height: 2px; background-color: #eaddc5; margin: 0 auto;"></div>
+            </div>
+        </div>
+
+        <!-- 2. 封面內頁 (空白) -->
+        <div class="page"></div>
+
+        <!-- 3. Page 1 -->
+        <div class="page">
+            <div class="page-num">1</div>
+            <h2 style="text-align: center;">引言</h2>
+            <p>義大利麵在台灣的餐桌上，經歷了一場猶如「文化翻譯」般的奇妙旅程。從遙遠的西洋珍饈，蛻變為深接地氣的庶民美食，再進階至講究道地工藝的精緻餐飲。</p>
+            <p>這段長達百年的演進史，宛如一面映照出台灣社會變遷與餐飲實力的鏡子，展現了這座島嶼極強的味覺韌性與包容力。</p>
+        </div>
+
+        <!-- 4. Page 2 -->
+        <div class="page">
+            <div class="page-num">2</div>
+            <h2>日治時期的西洋初體驗：<br>和風洋食的啟蒙</h2>
+            <p>這顆異國飲食的種子，早在百年前的日治時期便已悄悄播下。當時透過日本人的引介與轉譯，台灣人開始窺見西式餐飲的樣貌。</p>
+            <p>1908年落成的「鐵道飯店」，以及1934年開業的「波麗路」等西餐廳，成為了當時上流社會與文人雅士體驗西洋文化的奢華櫥窗。</p>
+        </div>
+
+        <!-- 5. Page 3 -->
+        <div class="page">
+            <div class="page-num">3</div>
+            <h2 style="border: none; margin-bottom: 5px;"></h2>
+            <p>然而，這些早期的西式料理多半經過日籍廚師的詮釋，帶有濃厚的「和風洋食」色彩，例如經典的紅酒燉牛肉或是帶有日式洋食影子的麵點。</p>
+            <p>這份間接的接觸，雖然不全然是原汁原味的義大利風情，卻讓台灣人的舌尖提早適應了跨文化融合的滋味，為日後擁抱並改造異國料理打下了良好的底蘊。</p>
+        </div>
+
+        <!-- 6. Page 4 -->
+        <div class="page">
+            <div class="page-num">4</div>
+            <h2>九〇年代的普及化：<br>平價快餐與「台味義大利麵」的誕生</h2>
+            <p>時序推移至上世紀九〇年代末期，義大利麵在台灣迎來了真正的普及化。走在各大專院校周邊或熱鬧商圈，主打平價、快速的義大利麵館如雨後春筍般冒出。</p>
+            <p>為了應付龐大且講求效率的客群，業者摸索出一套極具在地特色的營運模式：麵條通常預先煮至半熟備用，點餐後廚師再迅速舀入大量預製的紅、白、青醬，幾分鐘內便能熱騰騰端上桌。這種快餐化的節奏，成功讓義大利麵打破西餐廳的階級感，成為尋常學子與上班族日常溫飽的選項。</p>
+        </div>
+
+        <!-- 7. Page 5 -->
+        <div class="page">
+            <div class="page-num">5</div>
+            <h2 style="border: none; margin-bottom: 5px;"></h2>
+            <p>在追求效率與迎合在地口味的過程中，烹飪手法也發生了有趣的「質變」。原本西餐講究的平底鍋，被豪邁的中式尖底炒鍋取代；拌炒的油脂從初榨橄欖油換成了常見的沙拉油；有些廚師甚至會以醬油來提味。</p>
+            <p>不僅如此，台灣在地食材如剝皮辣椒、豆腐乳、小魚乾甚至是客家榨菜，也大膽地與義大利麵交融。這種充滿「鑊氣」與隨興風格的做法，或許在重視傳統的饕客眼中顯得不夠道地，但正是這種不受框架束縛的生命力，孕育出台灣專屬的市井風味。</p>
+        </div>
+
+        <!-- 8. Page 6 -->
+        <div class="page">
+            <div class="page-num">6</div>
+            <h2>2010年代至今的轉型期：<br>正宗工藝的溯源與生麵革新</h2>
+            <p>然而，台灣的餐飲市場並未停留在單一的平價風潮。隨著消費者國際視野的開拓與味蕾的升級，2010年代起，台灣義大利麵市場邁入了追求「正宗工藝與融合」的轉型期。這個階段的特徵，展現於「回歸義大利區域傳統」與「義大利麵口感革新」兩大發展雙軌。</p>
+        </div>
+
+        <!-- 9. Page 7 -->
+        <div class="page">
+            <div class="page-num">7</div>
+            <h2 style="border: none; margin-bottom: 5px;"></h2>
+            <p>首先是對於「正統義式精神」的極致追求。許多赴海外深造的台灣廚師，開始將義大利各地區的風土料理原封不動地搬回台灣。以知名義大利餐廳「Solo Pasta」的主廚王嘉平為例，他打破了台灣人對「紅、白、青醬」的刻板印象，堅持呈現義大利十二個產區的道地風味。</p>
+            <p>為了還原正宗口感，他們引進了傳統的「銅模製麵」，這種麵條表面粗糙，能完美吸附醬汁；在烹調上，他們更堅持不為了迎合在地而妥協，不加麵、不換麵、不改醬，甚至為了保留青醬（pesto）中新鮮羅勒的香氣，堅持不將青醬下鍋熱炒。這種「人等麵」的職人精神，教育了市場懂得欣賞講求小麥香與彈牙咬勁（Al dente）的真實義式美味。</p>
+        </div>
+
+        <!-- 10. Page 8 -->
+        <div class="page">
+            <div class="page-num">8</div>
+            <h2 style="border: none; margin-bottom: 5px;"></h2>
+            <p>與此同時，另一股由日本吹向台灣的「生義大利麵（生麵）」風潮，則在口感上掀起了另一場革命。有別於市面上經過80度熱風長時間烘烤、以利長途運輸的「乾義大利麵」，生義大利麵未經高溫乾燥，保留了豐富的水分。</p>
+            <p>自2017年前後，如SPIGA石壁家、BANCO、MOLINO等餐飲品牌相繼登台或創立，將造價不斐的製麵機直接搬進店鋪，主打每日現做。生義大利麵那種軟Ｑ、富含嚼勁的口感，完美擊中了台灣人對於「麵條Ｑ彈度」的偏好。加上透明玻璃櫥窗內現擠現做的「可視化」展演，不僅創造了極大的市場差異化，也讓義大利麵的品嚐體驗向上攀升至兼具新鮮與質感的層次。</p>
+        </div>
+
+        <!-- 11. Page 9 -->
+        <div class="page">
+            <div class="page-num">9</div>
+            <h2>今日義大利麵在台灣</h2>
+            <p>時至今日，義大利麵在台灣早已擺脫了單一「正宗與否」的包袱。今日的台灣餐桌上，我們既能享受一盤充滿熟悉台式鑊氣、大膽混搭豆腐乳的創意義大利麵；也能在下一餐，細細品味忠於波隆那百年傳統、講究銅模壓製與道地醬汁的職人麵點。</p>
+            <p>義大利麵以極強的韌性與包容力，吸納了這座島嶼的風土與人情，從早年的洋食初探、平價台味翻轉，一路進化至正宗工藝的百花齊放，寫下了屬於台灣自己，既熟悉又充滿驚喜的飲食篇章。</p>
+        </div>
+
+        <!-- 12. Page 10 -->
+        <div class="page">
+            <div class="page-num">10</div>
+            <h2>資料來源</h2>
+            <ol class="source-list">
+                <li>【歷史來說菜】日治時期的西洋味：臺灣西餐的華麗初登場（農傳媒）<br><a href="https://www.agriharvest.tw/archives/24013/" target="_blank">連結</a></li>
+                <li>飲食作家葉怡蘭／自由不羈、熱鬧多端：一路進化的「台味義大利麵」（500輯）<br><a href="https://500times.udn.com/wtimes/story/120840/6413162" target="_blank">連結</a></li>
+                <li>堅守傳統，探求源頭義大利魂頑童王嘉平（料理．台灣）<br><a href="https://ryoritaiwan.fcdc.org.tw/columns/1338" target="_blank">連結</a></li>
+                <li>不只生吐司，「生義大利麵」也掀旋風！它憑什麼紅？日本餐飲新浪潮的啟示（經理人）<br><a href="https://www.managertoday.com.tw/articles/view/62543" target="_blank">連結</a></li>
+            </ol>
+        </div>
+
+        <!-- 13. 封底內頁 (空白) -->
+        <div class="page"></div>
+        
+        <!-- 14. 封底 (硬皮) -->
+        <div class="page" data-density="hard">
+            <div style="width: 100%;">
+                <h1 style="font-size: 20px; color: #eaddc5; letter-spacing: 5px; margin: 0; text-shadow:none;">Fin.</h1>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<div class="instruction">💡 點擊書頁左右側，或拖曳書頁邊角來翻頁</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const pageFlip = new St.PageFlip(document.getElementById('flipbook'), {
+            width: 450,
+            height: 600,
+            size: "fixed",
+            minWidth: 450,
+            maxWidth: 450,
+            minHeight: 600,
+            maxHeight: 600,
+            maxShadowOpacity: 0.3,
+            showCover: true,
+            mobileScrollSupport: false,
+            usePortrait: false
+        });
+
+        pageFlip.loadFromHTML(document.querySelectorAll('.page'));
+    });
+</script>
+
+</body>
+</html>
