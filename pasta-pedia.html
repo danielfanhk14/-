@@ -5,83 +5,85 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>義大利麵百科</title>
     <style>
-        /* --- 莫蘭迪大地色系 --- */
-        :root {
-            --bg-base: #F2EFE9;
-            --text-dark: #3A3530;
-            --text-light: #7A7267;
-            --accent-terra: #B25D4A;
-            --border-color: #D8D1C7;
-            --nav-height: 60px; /* 定義導覽列高度方便計算 */
-        }
+    /* --- 莫蘭迪大地色系 --- */
+    :root {
+        --bg-base: #F2EFE9;
+        --text-dark: #3A3530;
+        --text-light: #7A7267;
+        --accent-terra: #B25D4A;
+        --border-color: #D8D1C7;
+        --nav-height: 60px; 
+    }
 
-        body, html {
-            margin: 0;
-            padding: 0;
-            height: 100%; /* 確保高度計算正確 */
-            font-family: 'Noto Serif TC', 'Georgia', serif;
-            background-color: var(--bg-base);
-            color: var(--text-dark);
-            overflow: hidden; /* 防止出現雙重滾動條 */
-        }
+    body, html {
+        margin: 0;
+        padding: 0;
+        height: 100%;
+        font-family: 'Noto Serif TC', 'Georgia', serif;
+        background-color: var(--bg-base);
+        color: var(--text-dark);
+        overflow: hidden; 
+    }
 
-        /* --- 導覽列 --- */
-        .global-nav {
-            height: var(--nav-height);
-            width: 100%;
-            background-color: rgba(242, 239, 233, 0.95);
-            backdrop-filter: blur(5px);
-            border-bottom: 1px solid var(--border-color);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 40px;
-            position: relative;
-            z-index: 1000;
-            box-sizing: border-box;
-        }
+    /* --- 全域導覽列樣式 (修正為與 index 同步) --- */
+    .global-nav {
+        position: sticky; /* 從 relative 改為 sticky */
+        top: 0;
+        width: 100%;
+        background-color: rgba(242, 239, 233, 0.95);
+        backdrop-filter: blur(5px);
+        border-bottom: 1px solid var(--border-color);
+        display: flex;
+        justify-content: center;
+        gap: 40px;
+        padding: 15px 0; /* 統一內距 */
+        z-index: 1000;
+        font-family: 'Helvetica Neue', sans-serif;
+        box-sizing: border-box; /* 確保 padding 不會撐開寬度 */
+    }
 
-        .nav-item {
-            text-decoration: none;
-            color: var(--text-light);
-            font-size: 0.9rem;
-            letter-spacing: 2px;
-            transition: all 0.3s ease;
-            position: relative;
-        }
+    .nav-item {
+        text-decoration: none;
+        color: var(--text-light);
+        font-size: 0.9rem;
+        letter-spacing: 2px;
+        transition: all 0.3s ease;
+        position: relative;
+    }
 
-        .nav-item:hover, .nav-item.active {
-            color: var(--accent-terra);
-        }
+    .nav-item:hover, .nav-item.active {
+        color: var(--accent-terra);
+    }
 
-        .nav-item::after {
-            content: '';
-            position: absolute;
-            width: 0;
-            height: 1px;
-            bottom: -5px;
-            left: 0;
-            background-color: var(--accent-terra);
-            transition: width 0.3s ease;
-        }
+    .nav-item::after {
+        content: '';
+        position: absolute;
+        width: 0;
+        height: 1px;
+        bottom: -5px;
+        left: 0;
+        background-color: var(--accent-terra);
+        transition: width 0.3s ease;
+    }
 
-        .nav-item:hover::after, .nav-item.active::after {
-            width: 100%;
-        }
+    .nav-item:hover::after, .nav-item.active::after {
+        width: 100%;
+    }
 
-        /* --- Iframe 容器 --- */
-        .iframe-container {
-            width: 100%;
-            height: calc(100vh - var(--nav-height)); /* 動態計算剩餘高度 */
-            border: none;
-        }
+    /* --- Iframe 容器 --- */
+    .iframe-container {
+        width: 100%;
+        /* 這裡的 calc 若原本運作良好可保留，或改用 flex 佈局 */
+        height: calc(100vh - 54px); 
+        border: none;
+    }
 
-        iframe {
-            width: 100%;
-            height: 100%;
-            border: none;
-        }
-    </style>
+    iframe {
+        width: 100%;
+        height: 100%;
+        border: none;
+    }
+</style>
 </head>
 <body>
 
