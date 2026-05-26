@@ -1,164 +1,87 @@
-<<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="zh-TW">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>義大利麵百科</title>
     <style>
-        /* --- 莫蘭迪大地色系與字體設定 ---*/
+        /* --- 莫蘭迪大地色系 --- */
         :root {
-            --bg-base: #F2EFE9;       /* 溫潤紙張底色 */
-            --text-dark: #3A3530;     /* 深墨灰 */
-            --text-light: #7A7267;    /* 淺灰棕 */
-            --accent-terra: #B25D4A;  /* 陶土紅 */
-            --accent-wheat: #D4B886;  /* 麥穗黃 */
-            --accent-sage: #899C8E;   /* 鼠尾草綠 */
+            --bg-base: #F2EFE9;
+            --text-dark: #3A3530;
+            --text-light: #7A7267;
+            --accent-terra: #B25D4A;
             --border-color: #D8D1C7;
+            --nav-height: 60px; /* 定義導覽列高度方便計算 */
         }
 
-        body {
+        body, html {
             margin: 0;
-            font-family: 'Noto Serif TC', 'Georgia', serif; /* 使用襯線字體增添人文底蘊 */
+            padding: 0;
+            height: 100%; /* 確保高度計算正確 */
+            font-family: 'Noto Serif TC', 'Georgia', serif;
             background-color: var(--bg-base);
             color: var(--text-dark);
-            overflow-x: hidden;
-            line-height: 1.8;
+            overflow: hidden; /* 防止出現雙重滾動條 */
         }
 
-        h1, h2, h3 {
-            font-weight: normal;
+        /* --- 導覽列 --- */
+        .global-nav {
+            height: var(--nav-height);
+            width: 100%;
+            background-color: rgba(242, 239, 233, 0.95);
+            backdrop-filter: blur(5px);
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 40px;
+            position: relative;
+            z-index: 1000;
+            box-sizing: border-box;
+        }
+
+        .nav-item {
+            text-decoration: none;
+            color: var(--text-light);
+            font-size: 0.9rem;
             letter-spacing: 2px;
-            margin: 0;
+            transition: all 0.3s ease;
+            position: relative;
         }
 
-/* --- 全域導覽列樣式 --- */
-.global-nav {
-    position: sticky;
-    top: 0;
-    width: 100%;
-    background-color: rgba(242, 239, 233, 0.95); /* 帶透明度的底色  */
-    backdrop-filter: blur(5px);
-    border-bottom: 1px solid var(--border-color);
-    display: flex;
-    justify-content: center;
-    gap: 40px;
-    padding: 15px 0;
-    z-index: 1000;
-    font-family: 'Helvetica Neue', sans-serif;
-    box-sizing: border-box; /* 重要：確保 padding 不會撐開寬度 */
-}
+        .nav-item:hover, .nav-item.active {
+            color: var(--accent-terra);
+        }
 
-.nav-item {
-    text-decoration: none;
-    color: var(--text-light);
-    font-size: 0.9rem;
-    letter-spacing: 2px;
-    transition: all 0.3s ease;
-    position: relative;
-}
+        .nav-item::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 1px;
+            bottom: -5px;
+            left: 0;
+            background-color: var(--accent-terra);
+            transition: width 0.3s ease;
+        }
 
-.nav-item:hover, .nav-item.active {
-    color: var(--accent-terra);
-}
+        .nav-item:hover::after, .nav-item.active::after {
+            width: 100%;
+        }
 
-/* 下底線動畫 */
-.nav-item::after {
-    content: '';
-    position: absolute;
-    width: 0;
-    height: 1px;
-    bottom: -5px;
-    left: 0;
-    background-color: var(--accent-terra);
-    transition: width 0.3s ease;
-}
+        /* --- Iframe 容器 --- */
+        .iframe-container {
+            width: 100%;
+            height: calc(100vh - var(--nav-height)); /* 動態計算剩餘高度 */
+            border: none;
+        }
 
-.nav-item:hover::after, .nav-item.active::after {
-    width: 100%;
-}
-    
-    .container {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        width: 100%;
-        flex-grow: 1; /* 佔滿剩餘高度以達到書本置中效果 */
-    }
-
-    #flipbook {
-        box-shadow: 0 10px 40px rgba(0,0,0,0.5);
-    }
-
-    .page {
-        background-color: #fdfaf5;
-        padding: 40px 50px;
-        box-sizing: border-box;
-        overflow: hidden;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        color: #333;
-        background-image: linear-gradient(to right, #f4ecd8 0%, #fdfaf5 10%, #fdfaf5 90%, #f4ecd8 100%);
-    }
-
-    .page[data-density="hard"] {
-        background-color: #8b4513;
-        background-image: linear-gradient(to right, #6b340e 0%, #8b4513 10%, #8b4513 90%, #6b340e 100%);
-        color: #fff;
-        border: 2px solid #5c2e0b;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        text-align: center;
-    }
-
-    .page.--right {
-        border-left: 1px solid #d4c5b0;
-        box-shadow: inset 5px 0 10px rgba(0,0,0,0.05);
-    }
-    .page.--left {
-        border-right: 1px solid #d4c5b0;
-        box-shadow: inset -5px 0 10px rgba(0,0,0,0.05);
-    }
-
-    h1 { font-size: 28px; font-weight: 700; line-height: 1.5; text-shadow: 1px 1px 3px rgba(0,0,0,0.3); margin: 0 0 30px 0; text-align: center;}
-    h2 { font-size: 20px; color: #8b4513; font-weight: 600; margin-bottom: 20px; border-bottom: 1px solid #eaddc5; padding-bottom: 10px; line-height: 1.4;}
-    p { line-height: 1.8; font-size: 15px; text-align: justify; margin-bottom: 15px; text-indent: 30px; }
-    
-    .source-list { font-size: 13px; line-height: 1.6; margin-top: 10px; padding-left: 20px; text-align: left; }
-    .source-list li { margin-bottom: 10px; }
-    .source-list a { color: #8b4513; text-decoration: none; word-break: break-all; }
-    
-    .page-num { position: absolute; bottom: 25px; font-size: 13px; color: #999; font-family: sans-serif; }
-    .page.--right .page-num { right: 30px; }
-    .page.--left .page-num { left: 30px; }
-    
-    .instruction {
-        position: absolute;
-        bottom: 20px;
-        width: 100%;
-        text-align: center;
-        color: #bdc3c7;
-        font-family: sans-serif;
-        font-size: 14px;
-        pointer-events: none;
-        letter-spacing: 1px;
-    }
-/* 讓外層容器填滿剩餘螢幕高度 */
-.iframe-container {
-    width: 100%;
-    height: calc(100vh - 60px); /* 100vh 是螢幕全高，60px 是您導覽列的大約高度 */
-    overflow: hidden;
-}
-
-/* 讓 iframe 填滿容器，並去掉邊框 */
-.iframe-container iframe {
-    width: 100%;
-    height: 100%;
-    border: none;
-}
-
-</style>
+        iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+    </style>
 </head>
 <body>
 
@@ -170,7 +93,12 @@
 </nav>
 
 <div class="iframe-container">
-    <iframe src="https://pastaworld-95xygkqt.manus.space/" title="義大利麵百科"></iframe>
+    <iframe 
+        src="https://pastaworld-95xygkqt.manus.space/" 
+        title="義大利麵百科"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+        allowfullscreen>
+    </iframe>
 </div>    
 
 </body>
