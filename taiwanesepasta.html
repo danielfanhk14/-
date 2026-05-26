@@ -34,16 +34,18 @@
     position: sticky;
     top: 0;
     width: 100%;
-    background-color: rgba(242, 239, 233, 0.95); /* 帶透明度的底色 */
+    background-color: rgba(242, 239, 233, 0.95);
     backdrop-filter: blur(5px);
     border-bottom: 1px solid var(--border-color);
     display: flex;
     justify-content: center;
+    align-items: center; /* 確保垂直置中 */
     gap: 40px;
     padding: 15px 0;
     z-index: 1000;
     font-family: 'Helvetica Neue', sans-serif;
-    box-sizing: border-box; /* 重要：確保 padding 不會撐開寬度 */
+    box-sizing: border-box;
+    line-height: 1.2; /* 強制統一文字行高，避免被外部 body 影響 */
 }
 
 .nav-item {
