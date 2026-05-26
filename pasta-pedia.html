@@ -27,20 +27,22 @@
 
     /* --- 全域導覽列樣式 (修正為與 index 同步) --- */
     .global-nav {
-        position: sticky; /* 從 relative 改為 sticky */
-        top: 0;
-        width: 100%;
-        background-color: rgba(242, 239, 233, 0.95);
-        backdrop-filter: blur(5px);
-        border-bottom: 1px solid var(--border-color);
-        display: flex;
-        justify-content: center;
-        gap: 40px;
-        padding: 15px 0; /* 統一內距 */
-        z-index: 1000;
-        font-family: 'Helvetica Neue', sans-serif;
-        box-sizing: border-box; /* 確保 padding 不會撐開寬度 */
-    }
+    position: sticky;
+    top: 0;
+    width: 100%;
+    background-color: rgba(242, 239, 233, 0.95);
+    backdrop-filter: blur(5px);
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    justify-content: center;
+    align-items: center; /* 確保垂直置中 */
+    gap: 40px;
+    padding: 15px 0;
+    z-index: 1000;
+    font-family: 'Helvetica Neue', sans-serif;
+    box-sizing: border-box;
+    line-height: 1.2; /* 強制統一文字行高，避免被外部 body 影響 */
+}
 
     .nav-item {
         text-decoration: none;
