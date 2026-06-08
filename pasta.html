@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>互動小廚房</title>
     <style>
-        /* --- 承襲 index.html 的視覺規範 ---*/
+        /* --- index.html 視覺規範 ---*/
         :root {
             --bg-base: #F2EFE9;
             --panel-bg: #FFFFFF;
@@ -17,36 +17,36 @@
             --border-color: #D8D1C7;
         }
 
-        /* 修正 body 排版：確保導覽列置頂且不跳動 */
+        /* 確保導覽列置頂且不跳動 */
         body {
             font-family: 'Noto Serif TC', 'Georgia', serif;
             background-color: var(--bg-base);
             color: var(--text-dark);
             margin: 0;
             padding: 0;
-            display: block; /* 移除 flex，改回區塊排版 */
+            display: block;
             min-height: 100vh;
             overflow-x: hidden;
         }
 
-        /* --- 全域導覽列樣式 (與首頁完全同步) --- */
+        /* --- 全域導覽列樣式 --- */
         .global-nav {
-    position: sticky;
-    top: 0;
-    width: 100%;
-    background-color: rgba(242, 239, 233, 0.95);
-    backdrop-filter: blur(5px);
-    border-bottom: 1px solid var(--border-color);
-    display: flex;
-    justify-content: center;
-    align-items: center; /* 確保垂直置中 */
-    gap: 40px;
-    padding: 15px 0;
-    z-index: 1000;
-    font-family: 'Helvetica Neue', sans-serif;
-    box-sizing: border-box;
-    line-height: 1.2; /* 強制統一文字行高，避免被外部 body 影響 */
-}
+            position: sticky;
+            top: 0;
+            width: 100%;
+            background-color: rgba(242, 239, 233, 0.95);
+            backdrop-filter: blur(5px);
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 40px;
+            padding: 15px 0;
+            z-index: 1000;
+            font-family: 'Helvetica Neue', sans-serif;
+            box-sizing: border-box;
+            line-height: 1.2;
+        }
 
         .nav-item {
             text-decoration: none;
@@ -69,7 +69,7 @@
         }
         .nav-item.active::after { width: 100%; }
 
-        /* --- 內容容器：修正內容置中問題 --- */
+        /* --- 內容容器 --- */
         .page-content {
             display: flex;
             flex-direction: column;
@@ -98,17 +98,16 @@
             font-family: 'Helvetica Neue', sans-serif;
         }
 
-        /* --- 確保 game-board 本身也不限制高度 --- */
+        /* --- 面板佈局 --- */
         .game-board {
             display: flex;
             justify-content: center;
-            align-items: flex-start; /* 改為 flex-start 讓面板對齊頂部 */
+            align-items: flex-start;
             width: 100%;
             max-width: 1200px;
             gap: 30px;
         }
 
-        /* --- 修改桌面版側邊欄樣式 --- */
         .side-panel {
             flex: 1;
             background-color: var(--panel-bg);
@@ -116,7 +115,6 @@
             border-radius: 4px;
             padding: 25px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.03);
-            /* --- 關鍵修改：移除高度限制與捲軸 --- */
             max-height: none; 
             overflow-y: visible; 
         }
@@ -130,7 +128,6 @@
             padding-bottom: 15px;
             color: var(--text-dark);
             border-bottom: 1px solid var(--border-color);
-            /* --- 關鍵修改：移除 sticky，讓標題隨頁面捲動 --- */
             position: static; 
             background: var(--panel-bg);
             z-index: 10;
@@ -143,6 +140,7 @@
             margin-top: 20px;
         }
 
+        /* --- 項目卡片樣式 --- */
         .item-card {
             border: 1px solid var(--border-color);
             border-radius: 2px;
@@ -151,12 +149,33 @@
             cursor: pointer;
             transition: all 0.4s ease;
             background-color: #fcfcfc;
+            position: relative; /* 為了放推薦標籤設定的 */
         }
 
         .item-card:hover { border-color: var(--accent-wheat); background-color: #fff; }
         .item-icon { font-size: 2.2rem; margin-bottom: 10px; filter: grayscale(0.2); }
         .item-name { font-size: 0.85rem; letter-spacing: 1px; color: var(--text-dark); }
         .item-card.selected { background-color: var(--bg-base); border-color: var(--accent-sage); opacity: 0.7; }
+
+        /* 新增：被標記為主廚推薦的卡片樣式 */
+        .item-card.suggested {
+            border-color: var(--accent-terra);
+            background-color: #fffaf9;
+        }
+        .item-card.suggested::before {
+            content: '推薦';
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background-color: var(--accent-terra);
+            color: #fff;
+            font-size: 0.7rem;
+            padding: 3px 8px;
+            border-radius: 12px;
+            letter-spacing: 1px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            z-index: 2;
+        }
 
         /* --- 中間烹飪區 --- */
         .center-panel {
@@ -184,6 +203,30 @@
         .slot-hint { font-size: 0.7rem; color: var(--text-light); margin-top: 5px; }
 
         .main-pot { font-size: 7rem; margin-bottom: 30px; filter: sepia(0.2); }
+        
+        /* 主廚建議的區塊樣式 */
+        .suggestion-box {
+            display: none;
+            width: 200px; 
+            height: 200px;
+            background-color: #fff;
+            border: 2px dashed var(--accent-terra);
+            border-radius: 50%;
+            color: var(--accent-terra);
+            font-size: 0.9rem;
+            font-weight: bold;
+            text-align: center;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 30px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            padding: 15px;
+            box-sizing: border-box;
+            line-height: 1.5;
+            animation: popIn 0.3s ease-out;
+        }
+
         .cook-btn {
             background-color: transparent; border: 1px solid var(--text-dark);
             color: var(--text-dark); padding: 15px 50px; font-size: 1rem;
@@ -223,62 +266,22 @@
         
         /* 炒鍋效果 */
         @keyframes intense-fry { 
-  0% { 
-    transform: translateY(0) scale(1) rotate(0deg); 
-  } 
-  50% {
-    /* 跳到最高點時稍微向前傾斜 */
-    transform: translateY(-8px) scale(1.05) rotate(-3deg);
-  }
-  100% { 
-    transform: translateY(0) scale(1) rotate(0deg); 
-  } 
-}
+          0% { transform: translateY(0) scale(1) rotate(0deg); } 
+          50% { transform: translateY(-8px) scale(1.05) rotate(-3deg); }
+          100% { transform: translateY(0) scale(1) rotate(0deg); } 
+        }
 
-/* 由於在 keyframes 裡完整定義了來回，可以移除 alternate */
-.is-cooking { 
-  animation: intense-fry 0.3s infinite ease-in-out; 
-}
-
-
+        .is-cooking { 
+          animation: intense-fry 0.3s infinite ease-in-out; 
+        }
 
         @media (max-width: 900px) {
-            /* 調整容器為垂直排列 */
-            .game-board { 
-                flex-direction: column; 
-                align-items: center; 
-                gap: 20px;
-            }
-
-            /* 確保面板寬度撐滿 */
-            .side-panel, .center-panel { 
-                width: 100%; 
-                max-height: none; 
-            }
-
-            /* --- 重新定義手機版順序 --- */
-            
-            /* 1. 選取麵體 (原本在左，設為 order 1) */
-            .side-panel:first-child { 
-                order: 1; 
-            }
-
-            /* 2. 慢熬醬料 (原本在右，設為 order 2) */
-            .side-panel:last-child { 
-                order: 2; 
-            }
-
-            /* 3. 烹飪區 (原本在中間，設為 order 3) */
-            .center-panel { 
-                order: 3; 
-                padding: 40px 20px;
-            }
-
-            /* 優化：手機版網格改為三欄讓頁面不要太長 (選填) */
-            .grid-list {
-                grid-template-columns: repeat(3, 1fr);
-            }
-            
+            .game-board { flex-direction: column; align-items: center; gap: 20px; }
+            .side-panel, .center-panel { width: 100%; max-height: none; }
+            .side-panel:first-child { order: 1; }
+            .side-panel:last-child { order: 2; }
+            .center-panel { order: 3; padding: 40px 20px; }
+            .grid-list { grid-template-columns: repeat(3, 1fr); }
             .item-icon { font-size: 1.8rem; }
             .item-name { font-size: 0.75rem; }
         }
@@ -311,9 +314,12 @@
                 <div style="color: var(--text-light); font-size: 1.5rem;">+</div>
                 <div class="slot" id="slot-sauce" onclick="removeSauce()"><span class="slot-hint">待選醬汁</span></div>
             </div>
+            
             <div class="main-pot" id="main-pot"><img src="img/Pasta.png" style="width: 120px; height: 120px; opacity: 0.8;" alt="鍋子"></div>
+            <div class="suggestion-box" id="suggestion-box"></div>
+            
             <button class="cook-btn" id="cook-btn" onclick="startCooking()">等待食材放入...</button>
-            <div id="cooking-status" style="margin-top: 20px; font-size: 0.9rem; color: var(--accent-terra); height: 20px; letter-spacing: 2px;"></div>
+            <div id="cooking-status" style="margin-top: 20px; font-size: 0.9rem; font-weight: bold; color: var(--accent-terra); min-height: 20px; letter-spacing: 1px; text-align: center;"></div>
         </div>
 
         <div class="side-panel">
@@ -366,46 +372,46 @@
     };
 
     const combinations = {
-    'spaghetti': {
-        'carbonara': { name: 'Spaghetti Carbonara 卡波納拉義大利麵', desc: '羅馬最經典的義大利麵，細圓直麵搭配濃郁的起司蛋醬。簡單卻完美的組合。', img: 'img/Spaghetti_Carbonara.jpg' },
-        'aglio_e_olio': { name: 'Spaghetti Aglio e Olio 蒜油直麵', desc: '義大利南部的簡樸經典，細圓直麵搭配大蒜橄欖油。是廚師功力的試金石。', img: 'img/Spaghetti_Aglio_e_Olio.jpg' },
-        'cacio_e_pepe': { name: 'Spaghetti Cacio e Pepe 起司黑胡椒直麵', desc: '羅馬最簡樸的傑作，細圓直麵搭配帕克里諾起司與黑胡椒，呈現絲滑醬汁。', img: 'img/Spaghetti_Cacio_e_Pepe.jpg' },
-        'nero': { name: 'Spaghetti al Nero di Seppia 墨魚直麵', desc: '威尼斯的海邊經典，獨特的黑色墨魚醬與海鮮的鮮美風味完美結合。', img: 'img/Spaghetti_Nero.jpg' },
-        'three-cup_chicken': { name: 'Three-Cup Chicken 三杯雞義大利麵', desc: '將台灣熱炒店靈魂「三杯雞」重新演繹，讓濃郁麻油、醬香與九層塔香氣鎖在麵條中。', img: 'img/Three-Cup_Chicken_Pasta.png' },
-        'sakura_shrimp': { name: 'Sakura Shrimp 櫻花蝦義大利麵', desc: '利用台灣東港名產櫻花蝦的獨特香氣，搭配西式清炒手法，轉化為層次豐富的精緻麵食。', img: 'img/Sakura_Shrimp_Pasta.png' }
-    },
-    'penne': {
-        'marinara': { name: 'Penne all\'Arrabbiata 辣番茄筆管麵', desc: '筆管麵搭配香辣番茄醬。簡潔而充滿個性，辛辣的風味令人印象深刻。', img: 'img/Penne_Arrabbiata.jpg' },
-        'vodka': { name: 'Penne alla Vodka 伏特加番茄筆管麵', desc: '現代義大利經典，伏特加的獨特風味與番茄的酸度創造出令人驚艷的平衡。', img: 'img/Penne_Vodka.jpg' }
-    },
-    'fusilli': { 
-        'pesto': { name: 'Fusilli al Pesto 青醬螺旋麵', desc: '熱那亞的夏日佳餚，螺旋麵的凹槽完美吸附青醬，充滿羅勒香氣。', img: 'img/Fusilli_Pesto.jpg' } 
-    },
-    'tagliatelle': { 
-        'bolognese': { name: 'Tagliatelle al Ragù 波隆那肉醬寬扁麵', desc: '傳統波隆那肉醬與寬扁麵的完美結合，經過數小時熬煮，風味深邃。', img: 'img/Tagliatelle_Bolognese.jpg' } 
-    },
-    'linguine': { 
-        'vongole': { name: 'Linguine alle Vongole 蛤蜊細扁麵', desc: '義大利海岸經典，細扁麵搭配新鮮蛤蜊與白酒，散發清爽的海鮮香氣。', img: 'img/Linguine_Vongole.jpg' } 
-    },
-    'fettuccine': { 
-        'alfredo': { name: 'Fettuccine Alfredo 奶油起司緞帶麵', desc: '羅馬的奶油經典，緞帶麵浸浴在濃郁的帕瑪森起司奶油醬中。', img: 'img/Fettuccine_Alfredo.jpg' } 
-    },
-    'rigatoni': { 
-        'puttanesca': { name: 'Rigatoni alla Puttanesca 煙花女醬直管麵', desc: '那不勒斯風味，直管麵搭配黑橄欖與鳳尾魚醬，風味濃烈且充滿靈魂。', img: 'img/Rigatoni_Puttanesca.jpg' } 
-    },
-    'pappardelle': { 
-        'bolognese': { name: 'Pappardelle al Ragù 波隆那肉醬寬帶麵', desc: '寬帶麵能完美承載濃郁肉醬，適合喜愛飽足口感的饕客。', img: 'img/Pappardelle_Bolognese.jpg' } 
-    },
-    'conchiglie': { 
-        'vongole': { name: 'Conchiglie ai Frutti di Mare 海鮮貝殼麵', desc: '貝殼麵內部完美盛裝海鮮醬汁，是海鮮愛好者的天堂。', img: 'img/Conchiglie_Vongole.jpg' } 
-    },
-    'ravioli': { 
-        'alfredo': { name: 'Ravioli Alfredo 奶油起司方形餃', desc: '方形餃內餡搭配濃郁的奶油起司醬，簡單卻能帶出麵皮與起司的純粹。', img: 'img/Ravioli_Alfredo.jpg' } 
-    },
-    'lasagna': { 
-        'bolognese': { name: 'Lasagna alla Bolognese 波隆那千層麵', desc: '層層堆疊肉醬與白醬，經過烘烤呈現豐富的結構與風味。', img: 'img/Lasagna_Bolognese.jpg' } 
-    }
-};
+        'spaghetti': {
+            'carbonara': { name: 'Spaghetti Carbonara 卡波納拉義大利麵', desc: '羅馬最經典的義大利麵，細圓直麵搭配濃郁的起司蛋醬。簡單卻完美的組合。', img: 'img/Spaghetti_Carbonara.jpg' },
+            'aglio_e_olio': { name: 'Spaghetti Aglio e Olio 蒜油直麵', desc: '義大利南部的簡樸經典，細圓直麵搭配大蒜橄欖油。是廚師功力的試金石。', img: 'img/Spaghetti_Aglio_e_Olio.jpg' },
+            'cacio_e_pepe': { name: 'Spaghetti Cacio e Pepe 起司黑胡椒直麵', desc: '羅馬最簡樸的傑作，細圓直麵搭配帕克里諾起司與黑胡椒，呈現絲滑醬汁。', img: 'img/Spaghetti_Cacio_e_Pepe.jpg' },
+            'nero': { name: 'Spaghetti al Nero di Seppia 墨魚直麵', desc: '威尼斯的海邊經典，獨特的黑色墨魚醬與海鮮的鮮美風味完美結合。', img: 'img/Spaghetti_Nero.jpg' },
+            'three-cup_chicken': { name: 'Three-Cup Chicken 三杯雞義大利麵', desc: '將台灣熱炒店靈魂「三杯雞」重新演繹，讓濃郁麻油、醬香與九層塔香氣鎖在麵條中。', img: 'img/Three-Cup_Chicken_Pasta.png' },
+            'sakura_shrimp': { name: 'Sakura Shrimp 櫻花蝦義大利麵', desc: '利用台灣東港名產櫻花蝦的獨特香氣，搭配西式清炒手法，轉化為層次豐富的精緻麵食。', img: 'img/Sakura_Shrimp_Pasta.png' }
+        },
+        'penne': {
+            'marinara': { name: 'Penne all\'Arrabbiata 辣番茄筆管麵', desc: '筆管麵搭配香辣番茄醬。簡潔而充滿個性，辛辣的風味令人印象深刻。', img: 'img/Penne_Arrabbiata.jpg' },
+            'vodka': { name: 'Penne alla Vodka 伏特加番茄筆管麵', desc: '現代義大利經典，伏特加的獨特風味與番茄的酸度創造出令人驚艷的平衡。', img: 'img/Penne_Vodka.jpg' }
+        },
+        'fusilli': { 
+            'pesto': { name: 'Fusilli al Pesto 青醬螺旋麵', desc: '熱那亞的夏日佳餚，螺旋麵的凹槽完美吸附青醬，充滿羅勒香氣。', img: 'img/Fusilli_Pesto.jpg' } 
+        },
+        'tagliatelle': { 
+            'bolognese': { name: 'Tagliatelle al Ragù 波隆那肉醬寬扁麵', desc: '傳統波隆那肉醬與寬扁麵的完美結合，經過數小時熬煮，風味深邃。', img: 'img/Tagliatelle_Bolognese.jpg' } 
+        },
+        'linguine': { 
+            'vongole': { name: 'Linguine alle Vongole 蛤蜊細扁麵', desc: '義大利海岸經典，細扁麵搭配新鮮蛤蜊與白酒，散發清爽的海鮮香氣。', img: 'img/Linguine_Vongole.jpg' } 
+        },
+        'fettuccine': { 
+            'alfredo': { name: 'Fettuccine Alfredo 奶油起司緞帶麵', desc: '羅馬的奶油經典，緞帶麵浸浴在濃郁的帕瑪森起司奶油醬中。', img: 'img/Fettuccine_Alfredo.jpg' } 
+        },
+        'rigatoni': { 
+            'puttanesca': { name: 'Rigatoni alla Puttanesca 煙花女醬直管麵', desc: '那不勒斯風味，直管麵搭配黑橄欖與鳳尾魚醬，風味濃烈且充滿靈魂。', img: 'img/Rigatoni_Puttanesca.jpg' } 
+        },
+        'pappardelle': { 
+            'bolognese': { name: 'Pappardelle al Ragù 波隆那肉醬寬帶麵', desc: '寬帶麵能完美承載濃郁肉醬，適合喜愛飽足口感的饕客。', img: 'img/Pappardelle_Bolognese.jpg' } 
+        },
+        'conchiglie': { 
+            'vongole': { name: 'Conchiglie ai Frutti di Mare 海鮮貝殼麵', desc: '貝殼麵內部完美盛裝海鮮醬汁，是海鮮愛好者的天堂。', img: 'img/Conchiglie_Vongole.jpg' } 
+        },
+        'ravioli': { 
+            'alfredo': { name: 'Ravioli Alfredo 奶油起司方形餃', desc: '方形餃內餡搭配濃郁的奶油起司醬，簡單卻能帶出麵皮與起司的純粹。', img: 'img/Ravioli_Alfredo.jpg' } 
+        },
+        'lasagna': { 
+            'bolognese': { name: 'Lasagna alla Bolognese 波隆那千層麵', desc: '層層堆疊肉醬與白醬，經過烘烤呈現豐富的結構與風味。', img: 'img/Lasagna_Bolognese.jpg' } 
+        }
+    };
 
     let currentPasta = null;
     let currentSauce = null;
@@ -426,7 +432,7 @@
     function removePasta() { currentPasta = null; currentSauce = null; updateUI(); }
     function removeSauce() { currentSauce = null; updateUI(); }
 
-       function updateUI() {
+    function updateUI() {
         const slotPasta = document.getElementById('slot-pasta');
         slotPasta.innerHTML = currentPasta ? `<div>${pastas[currentPasta].icon}</div><div class="slot-hint">點擊移除</div>` : `<span class="slot-hint">選麵體<br>空</span>`;
         currentPasta ? slotPasta.classList.add('filled') : slotPasta.classList.remove('filled');
@@ -435,33 +441,81 @@
         slotSauce.innerHTML = currentSauce ? `<div>${sauces[currentSauce].icon}</div><div class="slot-hint">點擊移除</div>` : `<span class="slot-hint">選醬料<br>空</span>`;
         currentSauce ? slotSauce.classList.add('filled') : slotSauce.classList.remove('filled');
 
-        // --- 修改後的麵體清單邏輯 ---
+        // 先找出正確的推薦醬料 ID
+        let suggestedSauceId = null;
+        let suggestionText = "";
+        if (currentPasta && combinations[currentPasta]) {
+            const validSauces = Object.keys(combinations[currentPasta]);
+            if (validSauces.length > 0) {
+                suggestedSauceId = validSauces[0];
+                const suggestedSauceName = sauces[suggestedSauceId].zh;
+                suggestionText = `主廚建議<br><br>改配「${suggestedSauceName}」<br>會更好吃喔！`;
+            }
+        }
+
+        // 判斷目前是不是選錯了
+        const isInvalidCombo = currentPasta && currentSauce && (!combinations[currentPasta] || !combinations[currentPasta][currentSauce]);
+
         document.querySelectorAll("[id^='card-pasta-']").forEach(el => {
             const id = el.id.replace('card-pasta-', '');
             el.classList.toggle('selected', id === currentPasta);
-            
             if (currentPasta) {
-                // 如果已經選了麵體，只顯示被選中的那一個
                 el.style.display = (id === currentPasta) ? 'block' : 'none';
             } else {
-                // 如果還沒選麵體，根據醬汁過濾（或全部顯示）
-                el.style.display = (!currentSauce || (combinations[id] && combinations[id][currentSauce])) ? 'block' : 'none';
+                el.style.display = 'block'; 
             }
         });
 
         document.querySelectorAll("[id^='card-sauce-']").forEach(el => {
             const id = el.id.replace('card-sauce-', '');
             el.classList.toggle('selected', id === currentSauce);
-            el.style.display = (!currentPasta || (combinations[currentPasta] && combinations[currentPasta][id])) ? 'block' : 'none';
+            
+            // 如果目前選錯，而且這個選項剛好是推薦的，就加上推薦樣式
+            const isSuggested = isInvalidCombo && (id === suggestedSauceId);
+            el.classList.toggle('suggested', isSuggested);
+
+            if (currentSauce) {
+                // 如果已經選了醬料，只保留「目前選的」跟「推薦的」在畫面上
+                if (id === currentSauce || isSuggested) {
+                    el.style.display = 'block';
+                } else {
+                    el.style.display = 'none';
+                }
+            } else {
+                el.style.display = 'block'; 
+            }
         });
 
         const cookBtn = document.getElementById('cook-btn');
+        const status = document.getElementById('cooking-status');
+        const pot = document.getElementById('main-pot');
+        const suggestionBox = document.getElementById('suggestion-box');
+
         if (currentPasta && currentSauce) {
-            cookBtn.classList.add('ready');
-            cookBtn.innerText = "🔥 開始拌炒！";
+            if (!isInvalidCombo) {
+                // 正確組合：顯示鍋子、按鈕發亮
+                cookBtn.classList.add('ready');
+                cookBtn.innerText = "🔥 開始拌炒！";
+                status.innerText = "";
+                pot.style.display = 'block';
+                suggestionBox.style.display = 'none';
+            } else {
+                // 錯誤組合：隱藏鍋子、顯示中間建議文字
+                cookBtn.classList.remove('ready');
+                cookBtn.innerText = "配方錯誤";
+                status.innerText = "這樣不對我不要煮！"; 
+                
+                pot.style.display = 'none';
+                suggestionBox.innerHTML = suggestionText;
+                suggestionBox.style.display = 'flex';
+            }
         } else {
+            // 還沒選齊食材
             cookBtn.classList.remove('ready');
             cookBtn.innerText = "等待食材放入...";
+            status.innerHTML = "";
+            pot.style.display = 'block';
+            suggestionBox.style.display = 'none';
         }
     }
 
