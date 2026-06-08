@@ -149,7 +149,7 @@
             cursor: pointer;
             transition: all 0.4s ease;
             background-color: #fcfcfc;
-            position: relative; /* 為了放推薦標籤設定的 */
+            position: relative;
         }
 
         .item-card:hover { border-color: var(--accent-wheat); background-color: #fff; }
@@ -157,7 +157,7 @@
         .item-name { font-size: 0.85rem; letter-spacing: 1px; color: var(--text-dark); }
         .item-card.selected { background-color: var(--bg-base); border-color: var(--accent-sage); opacity: 0.7; }
 
-        /* 新增：被標記為主廚推薦的卡片樣式 */
+        /* 被標記為主廚推薦的卡片樣式 */
         .item-card.suggested {
             border-color: var(--accent-terra);
             background-color: #fffaf9;
@@ -204,7 +204,7 @@
 
         .main-pot { font-size: 7rem; margin-bottom: 30px; filter: sepia(0.2); }
         
-        /* 主廚建議的區塊樣式 */
+        /* 結合後的主廚建議區塊，稍微調大一點以容納所有文字 */
         .suggestion-box {
             display: none;
             width: 200px; 
@@ -221,9 +221,9 @@
             align-items: center;
             margin-bottom: 30px;
             box-shadow: 0 5px 15px rgba(0,0,0,0.05);
-            padding: 15px;
+            padding: 10px;
             box-sizing: border-box;
-            line-height: 1.5;
+            line-height: 1.4;
             animation: popIn 0.3s ease-out;
         }
 
@@ -441,7 +441,7 @@
         slotSauce.innerHTML = currentSauce ? `<div>${sauces[currentSauce].icon}</div><div class="slot-hint">點擊移除</div>` : `<span class="slot-hint">選醬料<br>空</span>`;
         currentSauce ? slotSauce.classList.add('filled') : slotSauce.classList.remove('filled');
 
-        // 先找出正確的推薦醬料 ID
+        // 先找出正確的推薦醬料 ID，並將兩段文字結合成一整塊
         let suggestedSauceId = null;
         let suggestionText = "";
         if (currentPasta && combinations[currentPasta]) {
@@ -449,11 +449,15 @@
             if (validSauces.length > 0) {
                 suggestedSauceId = validSauces[0];
                 const suggestedSauceName = sauces[suggestedSauceId].zh;
-                suggestionText = `主廚建議<br><br>改配「${suggestedSauceName}」<br>會更好吃喔！`;
+                
+                // 把「這樣不對我不要煮」放在上方，主廚建議放下方
+                suggestionText = `
+                    <span style="font-size: 1.05rem; margin-bottom: 12px; display: block;">這樣不對啦<br>我不要煮！</span>
+                    <span style="font-size: 0.8rem; color: var(--text-light); font-weight: normal; line-height: 1.5;">主廚建議<br>改配「<b style="color: var(--text-dark);">${suggestedSauceName}</b>」<br>會更好吃喔！</span>
+                `;
             }
         }
 
-        // 判斷目前是不是選錯了
         const isInvalidCombo = currentPasta && currentSauce && (!combinations[currentPasta] || !combinations[currentPasta][currentSauce]);
 
         document.querySelectorAll("[id^='card-pasta-']").forEach(el => {
@@ -470,12 +474,10 @@
             const id = el.id.replace('card-sauce-', '');
             el.classList.toggle('selected', id === currentSauce);
             
-            // 如果目前選錯，而且這個選項剛好是推薦的，就加上推薦樣式
             const isSuggested = isInvalidCombo && (id === suggestedSauceId);
             el.classList.toggle('suggested', isSuggested);
 
             if (currentSauce) {
-                // 如果已經選了醬料，只保留「目前選的」跟「推薦的」在畫面上
                 if (id === currentSauce || isSuggested) {
                     el.style.display = 'block';
                 } else {
@@ -493,24 +495,21 @@
 
         if (currentPasta && currentSauce) {
             if (!isInvalidCombo) {
-                // 正確組合：顯示鍋子、按鈕發亮
                 cookBtn.classList.add('ready');
                 cookBtn.innerText = "🔥 開始拌炒！";
                 status.innerText = "";
                 pot.style.display = 'block';
                 suggestionBox.style.display = 'none';
             } else {
-                // 錯誤組合：隱藏鍋子、顯示中間建議文字
                 cookBtn.classList.remove('ready');
                 cookBtn.innerText = "配方錯誤";
-                status.innerText = "這樣不對我不要煮！"; 
+                status.innerText = ""; // 移除下方重複的文字
                 
                 pot.style.display = 'none';
                 suggestionBox.innerHTML = suggestionText;
                 suggestionBox.style.display = 'flex';
             }
         } else {
-            // 還沒選齊食材
             cookBtn.classList.remove('ready');
             cookBtn.innerText = "等待食材放入...";
             status.innerHTML = "";
