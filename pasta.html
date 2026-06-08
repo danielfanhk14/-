@@ -207,8 +207,8 @@
         /* 結合後的主廚建議區塊，稍微調大一點以容納所有文字 */
         .suggestion-box {
             display: none;
-            width: 200px; 
-            height: 200px;
+            width: 250px; 
+            height: 250px;
             background-color: #fff;
             border: 2px dashed var(--accent-terra);
             border-radius: 50%;
@@ -452,7 +452,7 @@
                 
                 // 把「這樣不對我不要煮」放在上方，主廚建議放下方
                 suggestionText = `
-                    <span style="font-size: 1.05rem; margin-bottom: 12px; display: block;">這樣不對啦<br>我不要煮！</span>
+                    <span style="font-size: 1.05rem; margin-bottom: 12px; display: block;"><img src="img/生氣廚師.png"></span>
                     <span style="font-size: 0.8rem; color: var(--text-light); font-weight: normal; line-height: 1.5;">主廚建議<br>改配「<b style="color: var(--text-dark);">${suggestedSauceName}</b>」<br>會更好吃喔！</span>
                 `;
             }
